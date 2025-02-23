@@ -15,7 +15,8 @@ const vertexShader = `
     vec3 pos = position;
     
     // 기본적으로 살짝 바깥으로 휘어진 형태
-    float baseWave = sin(pos.x * 1.5) * 0.05;
+    // x 좌표를 -1에서 1로 정규화하고, 중앙(0)에서 최대로 튀어나오고 끝(-1, 1)에서 뒤로 들어가도록 함
+    float baseWave = -(pow(pos.x * 0.8, 2.0)) * 0.3;  // 2차 함수 형태로 휘어짐
     
     // 호버 시 추가되는 웨이브 효과 (약하게 조정)
     float hoverWave = sin(pos.x * 1.0 + uTime) * 0.05 * uHover;
