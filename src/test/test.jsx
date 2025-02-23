@@ -3,7 +3,6 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useTexture } from "@react-three/drei";
 import * as THREE from "three";
 import "./styles.css";
-import { useNavigate } from "react-router-dom";
 
 // 종이 휘어짐 효과를 위한 vertex shader
 const vertexShader = `
@@ -44,7 +43,7 @@ const fragmentShader = `
   }
 `;
 
-const Paper = ({ index, scroll, texture, onClick, isClicked }) => {
+const Paper = ({ index, scroll, texture }) => {
   const meshRef = useRef();
   const { viewport } = useThree();
   const [isHovered, setIsHovered] = useState(false);
@@ -67,38 +66,17 @@ const Paper = ({ index, scroll, texture, onClick, isClicked }) => {
     // 회전 각도를 -PI에서 PI 사이로 정규화
     targetRotation = ((targetRotation + Math.PI) % (Math.PI * 2)) - Math.PI;
 
-    // 클릭 시 애니메이션
-    let targetScale = 1;
-    let targetZ = 0;
-    let targetY = 0;
-    let targetRotationY = targetRotation;
-    let targetRotationX = isHovered ? -(Math.PI / 180) * 30 : 0;
+    // 현재 회전 각도로 부드럽게 이동
+    meshRef.current.rotation.y = targetRotation;
 
-    if (isClicked) {
-      targetScale = 2; // 2배로 확대
-      targetZ = 5; // 앞으로 이동
-      targetY = 0; // 수직 중앙
-      targetRotationY = 0; // 정면 바라보기
-      targetRotationX = 0; // 수직 회전 제거
-    }
-
-    // 부드러운 애니메이션 적용
-    meshRef.current.scale.x += (targetScale - meshRef.current.scale.x) * 0.1;
-    meshRef.current.scale.y += (targetScale - meshRef.current.scale.y) * 0.1;
-    meshRef.current.position.z += (targetZ - meshRef.current.position.z) * 0.1;
-    meshRef.current.position.y += (targetY - meshRef.current.position.y) * 0.1;
-    meshRef.current.rotation.y += (targetRotationY - meshRef.current.rotation.y) * 0.1;
+    // 호버 시 위쪽을 바라보는 각도 조정
+    const targetRotationX = isHovered ? -(Math.PI / 180) * 30 : 0;
     meshRef.current.rotation.x += (targetRotationX - meshRef.current.rotation.x) * 0.1;
 
-    // 클릭되지 않은 상태에서만 원형 배치 위치 계산
-    if (!isClicked) {
-      const radius = 3;
-      meshRef.current.position.x = Math.sin(baseRotation + scrollRotation) * radius;
-      meshRef.current.position.z = Math.cos(baseRotation + scrollRotation) * radius;
-    } else {
-      // 클릭된 상태에서는 중앙으로 이동
-      meshRef.current.position.x += (0 - meshRef.current.position.x) * 0.1;
-    }
+    // 고정된 원형 배치 위치 계산
+    const radius = 3;
+    meshRef.current.position.x = Math.sin(baseRotation + scrollRotation) * radius;
+    meshRef.current.position.z = Math.cos(baseRotation + scrollRotation) * radius;
 
     // 호버 값 부드럽게 변경
     uniforms.current.uHover.value += (isHovered ? 1 : 0 - uniforms.current.uHover.value) * 0.1;
@@ -108,19 +86,15 @@ const Paper = ({ index, scroll, texture, onClick, isClicked }) => {
     <mesh
       ref={meshRef}
       position={[Math.sin((index * Math.PI) / 3) * 3, 0, Math.cos((index * Math.PI) / 3) * 3]}
-      onPointerEnter={() => !isClicked && setIsHovered(true)}
-      onPointerLeave={() => !isClicked && setIsHovered(false)}
-      onClick={(e) => {
-        e.stopPropagation();
-        onClick(index);
-      }}
+      onPointerEnter={() => setIsHovered(true)}
+      onPointerLeave={() => setIsHovered(false)}
     >
       <planeGeometry args={[2, 3, 32, 32]} />
       <shaderMaterial
         vertexShader={vertexShader}
         fragmentShader={fragmentShader}
         uniforms={uniforms.current}
-        side={THREE.DoubleSide}
+        side={THREE.DoubleSide} // FrontSide에서 DoubleSide로 다시 변경
         transparent={true}
       />
     </mesh>
@@ -129,44 +103,22 @@ const Paper = ({ index, scroll, texture, onClick, isClicked }) => {
 
 const Scene = () => {
   const [scroll, setScroll] = useState(0);
-  const [clickedIndex, setClickedIndex] = useState(null);
   const texture = useTexture("https://www.fl-ex.co.kr/images/class/student/ljb-mc1th.jpg");
-  const navigate = useNavigate(); // React Router의 navigate 훅
 
+  // 스크롤 이벤트 처리 : 현재 휠 감도가 이상함 너무 수치값을 작게 잡아야 하는데...
   useEffect(() => {
     const handleScroll = (e) => {
-      if (clickedIndex === null) {
-        // 클릭되지 않은 상태에서만 스크롤 적용
-        setScroll((prev) => prev + e.deltaY * 0.001);
-      }
+      setScroll((prev) => prev + e.deltaY * 0.00005);
     };
 
     window.addEventListener("wheel", handleScroll);
     return () => window.removeEventListener("wheel", handleScroll);
-  }, [clickedIndex]);
-
-  // 클릭 시 페이지 전환
-  useEffect(() => {
-    if (clickedIndex !== null) {
-      // 애니메이션 시간 후 페이지 전환
-      const timer = setTimeout(() => {
-        navigate(`/detail/${clickedIndex}`); // 적절한 경로로 수정하세요
-      }, 1000); // 1초 후 전환
-      return () => clearTimeout(timer);
-    }
-  }, [clickedIndex, navigate]);
+  }, []);
 
   return (
     <group>
       {Array.from({ length: 6 }, (_, i) => (
-        <Paper
-          key={i}
-          index={i}
-          scroll={scroll}
-          texture={texture}
-          onClick={setClickedIndex}
-          isClicked={clickedIndex === i}
-        />
+        <Paper key={i} index={i} scroll={scroll} texture={texture} />
       ))}
     </group>
   );
