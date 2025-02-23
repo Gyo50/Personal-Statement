@@ -108,7 +108,7 @@ const Scene = () => {
   // 스크롤 이벤트 처리 : 현재 휠 감도가 이상함 너무 수치값을 작게 잡아야 하는데...
   useEffect(() => {
     const handleScroll = (e) => {
-      setScroll((prev) => prev + e.deltaY * 0.00005);
+      setScroll((prev) => prev - e.deltaY * 0.00005);
     };
 
     window.addEventListener("wheel", handleScroll);
