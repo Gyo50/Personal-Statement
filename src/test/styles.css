@@ -77,3 +77,8 @@ body {
   border-radius: 6px;
   cursor: pointer;
 }
+
+.intro_img{
+  width: 30%;
+  height: 30%;
+}

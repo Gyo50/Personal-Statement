@@ -131,6 +131,7 @@ const Test = () => {
       title: "👋 나의 소개",
       extra: (
         <div>
+          <img className="intro_img" src="./polioimg/image.png" alt="" />
           <p>안녕하세요! 저는 창의적이고 사용자 경험 중심의 개발을 지향하는 프론트엔드 개발자입니다.</p>
           <p>팀워크와 소통을 중시하며, 항상 새로운 기술을 배우고 적용하는 데에 열정을 가지고 있습니다.</p>
         </div>
