@@ -1,10 +1,12 @@
+// Test.jsx
+
 import React, { useRef, useEffect, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useTexture } from "@react-three/drei";
 import * as THREE from "three";
 import "./styles.css";
 
-// 종이 휘어짐 효과를 위한 vertex shader
+// ---------------------- Vertex Shader ----------------------
 const vertexShader = `
   uniform float uTime;
   uniform float uHover;
@@ -13,21 +15,17 @@ const vertexShader = `
   void main() {
     vUv = uv;
     vec3 pos = position;
-    
-    // 기본적으로 살짝 바깥으로 휘어진 형태
-    // x 좌표를 -1에서 1로 정규화하고, 중앙(0)에서 최대로 튀어나오고 끝(-1, 1)에서 뒤로 들어가도록 함
-    float baseWave = -(pow(pos.x * 0.8, 2.0)) * 0.3;  // 2차 함수 형태로 휘어짐
-    
-    // 호버 시 추가되는 웨이브 효과 (약하게 조정)
+
+    float baseWave = -(pow(pos.x * 0.8, 2.0)) * 0.3;
     float hoverWave = sin(pos.x * 1.0 + uTime) * 0.05 * uHover;
-    
+
     pos.z += baseWave + hoverWave;
-    
+
     gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
   }
 `;
 
-// Fragment shader 수정
+// ---------------------- Fragment Shader ----------------------
 const fragmentShader = `
   uniform sampler2D uTexture;
   uniform float uHover;
@@ -35,17 +33,30 @@ const fragmentShader = `
 
   void main() {
     vec4 texture = texture2D(uTexture, vUv);
-    
-    // gl_FrontFacing을 사용하여 앞면/뒷면 구분
-    float opacity = gl_FrontFacing ? 1.0 : 0.2;  // 뒷면일 경우 0.2의 투명도
-    
+    float opacity = gl_FrontFacing ? 1.0 : 0.2;
     gl_FragColor = vec4(texture.rgb, texture.a * opacity);
   }
 `;
 
-const Paper = ({ index, scroll, texture }) => {
+// ---------------------- Modal Component ----------------------
+const Modal = ({ visible, onClose, title, extra }) => {
+  if (!visible) return null;
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <h2>{title}</h2>
+        <div className="modal-extra">{extra}</div>
+        <button onClick={onClose} className="modal-close">닫기</button>
+      </div>
+    </div>
+  );
+};
+
+
+// ✅ Paper 컴포넌트 (동일)
+const Paper = ({ index, scroll, texture, onClick }) => {
   const meshRef = useRef();
-  const { viewport } = useThree();
   const [isHovered, setIsHovered] = useState(false);
   const uniforms = useRef({
     uTime: { value: 0 },
@@ -55,30 +66,16 @@ const Paper = ({ index, scroll, texture }) => {
 
   useFrame((state) => {
     uniforms.current.uTime.value = state.clock.elapsedTime;
-
-    // 기본 회전 각도 (각 종이의 고정된 위치)
     const baseRotation = (index * Math.PI) / 3;
-    // 스크롤에 따른 추가 회전
     const scrollRotation = scroll * Math.PI * 2;
-    // 최종 목표 회전 각도
     let targetRotation = baseRotation + scrollRotation;
-
-    // 회전 각도를 -PI에서 PI 사이로 정규화
     targetRotation = ((targetRotation + Math.PI) % (Math.PI * 2)) - Math.PI;
-
-    // 현재 회전 각도로 부드럽게 이동
     meshRef.current.rotation.y = targetRotation;
-
-    // 호버 시 위쪽을 바라보는 각도 조정
     const targetRotationX = isHovered ? -(Math.PI / 180) * 30 : 0;
     meshRef.current.rotation.x += (targetRotationX - meshRef.current.rotation.x) * 0.1;
-
-    // 고정된 원형 배치 위치 계산
     const radius = 3;
     meshRef.current.position.x = Math.sin(baseRotation + scrollRotation) * radius;
     meshRef.current.position.z = Math.cos(baseRotation + scrollRotation) * radius;
-
-    // 호버 값 부드럽게 변경
     uniforms.current.uHover.value += (isHovered ? 1 : 0 - uniforms.current.uHover.value) * 0.1;
   });
 
@@ -88,29 +85,29 @@ const Paper = ({ index, scroll, texture }) => {
       position={[Math.sin((index * Math.PI) / 3) * 3, 0, Math.cos((index * Math.PI) / 3) * 3]}
       onPointerEnter={() => setIsHovered(true)}
       onPointerLeave={() => setIsHovered(false)}
+      onClick={() => onClick(index)}
     >
       <planeGeometry args={[2, 3, 32, 32]} />
       <shaderMaterial
         vertexShader={vertexShader}
         fragmentShader={fragmentShader}
         uniforms={uniforms.current}
-        side={THREE.DoubleSide} // FrontSide에서 DoubleSide로 다시 변경
+        side={THREE.DoubleSide}
         transparent={true}
       />
     </mesh>
   );
 };
 
-const Scene = () => {
+// ✅ Scene 컴포넌트
+const Scene = ({ onPaperClick }) => {
   const [scroll, setScroll] = useState(0);
   const texture = useTexture("https://www.fl-ex.co.kr/images/class/student/ljb-mc1th.jpg");
 
-  // 스크롤 이벤트 처리 : 현재 휠 감도가 이상함 너무 수치값을 작게 잡아야 하는데...
   useEffect(() => {
     const handleScroll = (e) => {
       setScroll((prev) => prev - e.deltaY * 0.00005);
     };
-
     window.addEventListener("wheel", handleScroll);
     return () => window.removeEventListener("wheel", handleScroll);
   }, []);
@@ -118,15 +115,95 @@ const Scene = () => {
   return (
     <group>
       {Array.from({ length: 6 }, (_, i) => (
-        <Paper key={i} index={i} scroll={scroll} texture={texture} />
+        <Paper key={i} index={i} scroll={scroll} texture={texture} onClick={onPaperClick} />
       ))}
     </group>
   );
 };
 
+// ✅ Main (Test) 컴포넌트
 const Test = () => {
+  const [popupVisible, setPopupVisible] = useState(false);
+  const [popupData, setPopupData] = useState({ title: "", description: "" });
+
+  const contents = [
+    {
+      title: "👋 나의 소개",
+      extra: (
+        <div>
+          <p>안녕하세요! 저는 창의적이고 사용자 경험 중심의 개발을 지향하는 프론트엔드 개발자입니다.</p>
+          <p>팀워크와 소통을 중시하며, 항상 새로운 기술을 배우고 적용하는 데에 열정을 가지고 있습니다.</p>
+        </div>
+      ),
+    },
+    {
+      title: "💻 나의 스킬",
+      extra: (
+        <div>
+          <ul>
+            <li>⚛️ React / Next.js</li>
+            <li>🎨 TailwindCSS / Styled-components</li>
+            <li>🧠 TypeScript / JavaScript</li>
+            <li>🌐 WebGL / Three.js</li>
+            <li>🛠️ Git / GitHub / CI</li>
+          </ul>
+          <p style={{ marginTop: "10px" }}>위 기술들을 활용해 반응형 인터페이스와 인터랙티브 웹을 구현할 수 있습니다.</p>
+        </div>
+      ),
+    },
+    {
+      title: "📁 프로젝트 1 – 포트폴리오 생성기",
+      extra: (
+        <div>
+          <p><strong>설명:</strong> GPT 기반 자기소개 페이지 자동 생성 도구</p>
+          <p><strong>기능:</strong> 사용자가 입력한 정보로 자동 생성되는 이력서/포트폴리오</p>
+          <a href="https://gptonline.ai/ko/" target="_blank" rel="noopener noreferrer">👉 데모 보기</a>
+        </div>
+      ),
+    },
+    {
+      title: "📁 프로젝트 2 – 3D 인터랙티브 뷰어",
+      extra: (
+        <div>
+          <p><strong>설명:</strong> Three.js 기반 학습 도구 (3D 객체 회전, 확대/축소 가능)</p>
+          <p><strong>기술:</strong> React Three Fiber, GLSL Shader</p>
+          <img src="https://via.placeholder.com/300x180" alt="3D 뷰어" style={{ borderRadius: "8px", marginTop: "10px" }} />
+        </div>
+      ),
+    },
+    {
+      title: "📁 프로젝트 3 – 실시간 협업툴",
+      extra: (
+        <div>
+          <p><strong>설명:</strong> WebSocket 기반 채팅 및 문서 편집 기능 구현</p>
+          <p><strong>기술:</strong> React, Socket.IO, Quill.js</p>
+          <ul>
+            <li>✅ 사용자 간 실시간 동기화</li>
+            <li>✅ 간단한 권한 분기 시스템</li>
+          </ul>
+        </div>
+      ),
+    },
+    {
+      title: "📁 프로젝트 4 – 여행 기록 앱",
+      extra: (
+        <div>
+          <p><strong>설명:</strong> 여행지 사진, 위치, 날짜 기록이 가능한 모바일 앱</p>
+          <p><strong>기술:</strong> React Native, Firebase, Google Maps API</p>
+          <p>사진과 메모를 함께 저장하여 여행 추억을 간직할 수 있는 기능을 구현했습니다.</p>
+        </div>
+      ),
+    },
+  ];
+  
+
+  const handlePaperClick = (index) => {
+    setPopupData(contents[index]);
+    setPopupVisible(true);
+  };
+
   return (
-    <div style={{ width: "100vw", height: "100vh", background: "#000" }}>
+    <div style={{ width: "100vw", height: "100vh", background: "#000", position: "relative" }}>
       <Canvas
         camera={{
           position: [0, 4, 8],
@@ -139,8 +216,15 @@ const Test = () => {
         <color attach="background" args={["#000"]} />
         <ambientLight intensity={0.5} />
         <pointLight position={[10, 10, 10]} intensity={1} />
-        <Scene />
+        <Scene onPaperClick={handlePaperClick} />
       </Canvas>
+
+      <Modal
+        visible={popupVisible}
+        onClose={() => setPopupVisible(false)}
+        title={popupData.title}
+        extra={popupData.extra}
+      />
     </div>
   );
 };
