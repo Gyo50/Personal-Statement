@@ -2,6 +2,7 @@
 
 import React, { useRef, useEffect, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { OrbitControls } from "@react-three/drei";
 import { useTexture } from "@react-three/drei";
 import * as THREE from "three";
 import "./styles.css";
@@ -17,7 +18,7 @@ const vertexShader = `
     vec3 pos = position;
 
     float baseWave = -(pow(pos.x * 0.8, 2.0)) * 0.3;
-    float hoverWave = sin(pos.x * 1.0 + uTime) * 0.05 * uHover;
+    float hoverWave = sin(pos.x * 1.0 + uTime) * 0.5 * uHover;
 
     pos.z += baseWave + hoverWave;
 
@@ -58,34 +59,78 @@ const Modal = ({ visible, onClose, title, extra }) => {
 const Paper = ({ index, scroll, texture, onClick }) => {
   const meshRef = useRef();
   const [isHovered, setIsHovered] = useState(false);
+  const [isFront, setIsFront] = useState(false);
+  const entryStart = useRef(null);
+
+
   const uniforms = useRef({
     uTime: { value: 0 },
     uHover: { value: 0 },
     uTexture: { value: texture },
   });
+  const totalCards = 6;
+  const radius = 3;
+  const totalTravelAngle = Math.PI * 2; // 360도 한 바퀴
+  const travelDuration = 1.5; // 이동 애니메이션 시간 (초)
+
+  const [travelDone, setTravelDone] = useState(false);
+
 
   useFrame((state) => {
     uniforms.current.uTime.value = state.clock.elapsedTime;
-    const baseRotation = (index * Math.PI) / 3;
-    const scrollRotation = scroll * Math.PI * 2;
-    let targetRotation = baseRotation + scrollRotation;
-    targetRotation = ((targetRotation + Math.PI) % (Math.PI * 2)) - Math.PI;
-    meshRef.current.rotation.y = targetRotation;
+
+    // 진행 시간 계산
+    if (entryStart.current === null) entryStart.current = state.clock.elapsedTime;
+    const elapsed = state.clock.elapsedTime - entryStart.current;
+    const t = Math.min(elapsed / travelDuration, 1);
+    const ease = t * t * (3 - 2 * t); // easeInOut
+
+    const finalAngle = (index * Math.PI * 2) / totalCards; // 최종 위치 각도
+    const startAngle = finalAngle + Math.PI / 1.5; // 오른쪽에서 시작
+
+    const currentAngle = startAngle + (finalAngle - startAngle) * ease;
+
+    const x = Math.sin(currentAngle) * radius;
+    const z = Math.cos(currentAngle) * radius;
+    const yRot = ((currentAngle + Math.PI) % (Math.PI * 2)) - Math.PI;
+
+    meshRef.current.position.set(x, 0, z);
+    meshRef.current.rotation.y = yRot;
+
+    const startScale = 1.4;
+    const scale = startScale + (1 - startScale) * ease;
+    meshRef.current.scale.set(scale, scale, scale);
+
+    // Hover 회전
     const targetRotationX = isHovered ? -(Math.PI / 180) * 30 : 0;
     meshRef.current.rotation.x += (targetRotationX - meshRef.current.rotation.x) * 0.1;
-    const radius = 3;
-    meshRef.current.position.x = Math.sin(baseRotation + scrollRotation) * radius;
-    meshRef.current.position.z = Math.cos(baseRotation + scrollRotation) * radius;
-    uniforms.current.uHover.value += (isHovered ? 1 : 0 - uniforms.current.uHover.value) * 0.1;
+    uniforms.current.uHover.value += ((isHovered ? 1 : 0) - uniforms.current.uHover.value) * 0.1;
+
+    if (t === 1 && !travelDone) {
+      setTravelDone(true);
+    }
+
+    // 정면 판단
+    const cam = state.camera;
+    const dir = new THREE.Vector3();
+    cam.getWorldDirection(dir);
+
+    const toCard = new THREE.Vector3()
+      .copy(meshRef.current.position)
+      .sub(cam.position)
+      .normalize();
+
+    const dot = dir.dot(toCard);
+    setIsFront(dot > 0.98);
+
   });
 
   return (
     <mesh
       ref={meshRef}
-      position={[Math.sin((index * Math.PI) / 3) * 3, 0, Math.cos((index * Math.PI) / 3) * 3]}
-      onPointerEnter={() => setIsHovered(true)}
+      onPointerEnter={() => isFront && setIsHovered(true)}
       onPointerLeave={() => setIsHovered(false)}
-      onClick={() => onClick(index)}
+      onClick={() => isFront && onClick(index)}
     >
       <planeGeometry args={[2, 3, 32, 32]} />
       <shaderMaterial
@@ -119,6 +164,8 @@ const Scene = ({ onPaperClick }) => {
       ))}
     </group>
   );
+
+
 };
 
 // ✅ Main (Test) 컴포넌트
@@ -158,7 +205,7 @@ const Test = () => {
         <div>
           <p><strong>설명:</strong> GPT 기반 자기소개 페이지 자동 생성 도구</p>
           <p><strong>기능:</strong> 사용자가 입력한 정보로 자동 생성되는 이력서/포트폴리오</p>
-          <a href="https://gptonline.ai/ko/" target="_blank" rel="noopener noreferrer">👉 데모 보기</a>
+          <a href="https://gyo50.github.io/Nexon.github.io/" target="_blank" rel="noopener noreferrer">👉 데모 보기</a>
         </div>
       ),
     },
@@ -168,7 +215,7 @@ const Test = () => {
         <div>
           <p><strong>설명:</strong> Three.js 기반 학습 도구 (3D 객체 회전, 확대/축소 가능)</p>
           <p><strong>기술:</strong> React Three Fiber, GLSL Shader</p>
-          <img src="https://via.placeholder.com/300x180" alt="3D 뷰어" style={{ borderRadius: "8px", marginTop: "10px" }} />
+          <a href="https://gyo50.github.io/Micro.github.io/" target="_blank" rel="noopener noreferrer">👉 데모 보기</a>
         </div>
       ),
     },
@@ -196,7 +243,8 @@ const Test = () => {
       ),
     },
   ];
-  
+
+
 
   const handlePaperClick = (index) => {
     setPopupData(contents[index]);
@@ -208,7 +256,6 @@ const Test = () => {
       <Canvas
         camera={{
           position: [0, 4, 8],
-          rotation: [-(Math.PI / 180) * 30, 0, 0],
           fov: 45,
           near: 0.1,
           far: 100,
@@ -218,6 +265,14 @@ const Test = () => {
         <ambientLight intensity={0.5} />
         <pointLight position={[10, 10, 10]} intensity={1} />
         <Scene onPaperClick={handlePaperClick} />
+
+        {/* ✅ 마우스 드래그만 허용, 스크롤 금지 */}
+        <OrbitControls
+          enableDamping={true}
+          dampingFactor={0.1}
+          enableZoom={false} // ✅ scroll로 줌 막음
+          enablePan={false}  // ⛔ 옵션: 마우스로 끌어 움직이는 것도 막을 수 있음
+        />
       </Canvas>
 
       <Modal
