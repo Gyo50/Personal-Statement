@@ -8,6 +8,7 @@ import * as THREE from "three";
 import RainEffect from "./raineffect";
 import "./styles.css";
 import MyIntro from "./data/myself";
+import Myskill from "./data/myskill";
 
 // ---------------------- Vertex Shader ----------------------
 const vertexShader = `
@@ -188,23 +189,13 @@ const Test = () => {
   const [popupData, setPopupData] = useState({ title: "", description: "" });
 
   const contents = [
-    
-      MyIntro
-    ,
+  {
+    title: "👤 나에 대해",
+    extra: <MyIntro />,
+  },
     {
       title: "💻 나의 스킬",
-      extra: (
-        <div>
-          <ul>
-            <li>⚛️ React / Next.js</li>
-            <li>🎨 TailwindCSS / Styled-components</li>
-            <li>🧠 TypeScript / JavaScript</li>
-            <li>🌐 WebGL / Three.js</li>
-            <li>🛠️ Git / GitHub / CI</li>
-          </ul>
-          <p style={{ marginTop: "10px" }}>위 기술들을 활용해 반응형 인터페이스와 인터랙티브 웹을 구현할 수 있습니다.</p>
-        </div>
-      ),
+      extra: <Myskill />,
     },
     {
       title: "📁 프로젝트 1 – 포트폴리오 생성기",
