@@ -5,7 +5,9 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import { useTexture } from "@react-three/drei";
 import * as THREE from "three";
+import RainEffect from "./raineffect";
 import "./styles.css";
+import MyIntro from "./data/myself";
 
 // ---------------------- Vertex Shader ----------------------
 const vertexShader = `
@@ -70,9 +72,7 @@ const Paper = ({ index, scroll, texture, onClick }) => {
   });
   const totalCards = 6;
   const radius = 3;
-  const totalTravelAngle = Math.PI * 2; // 360도 한 바퀴
-  const travelDuration = 1.5; // 이동 애니메이션 시간 (초)
-
+  const travelDuration = 1; // 이동 애니메이션 시간 (초)
   const [travelDone, setTravelDone] = useState(false);
 
 
@@ -86,7 +86,7 @@ const Paper = ({ index, scroll, texture, onClick }) => {
     const ease = t * t * (3 - 2 * t); // easeInOut
 
     const finalAngle = (index * Math.PI * 2) / totalCards; // 최종 위치 각도
-    const startAngle = finalAngle + Math.PI / 1.5; // 오른쪽에서 시작
+    const startAngle = finalAngle + Math.PI / 1; // 오른쪽에서 시작
 
     const currentAngle = startAngle + (finalAngle - startAngle) * ease;
 
@@ -110,27 +110,41 @@ const Paper = ({ index, scroll, texture, onClick }) => {
       setTravelDone(true);
     }
 
-    // 정면 판단
-    const cam = state.camera;
-    const dir = new THREE.Vector3();
-    cam.getWorldDirection(dir);
+    // 👉 정면 판별 로직
+    const camera = state.camera;
 
-    const toCard = new THREE.Vector3()
-      .copy(meshRef.current.position)
-      .sub(cam.position)
-      .normalize();
+    const cardForward = new THREE.Vector3(0, 0, 1);
+    cardForward.applyQuaternion(meshRef.current.quaternion); // 회전된 방향으로 바꿔줌
 
-    const dot = dir.dot(toCard);
-    setIsFront(dot > 0.98);
+    const cameraDirection = new THREE.Vector3();
+    camera.getWorldDirection(cameraDirection).normalize();
+
+    const dot = cardForward.dot(cameraDirection);
+
+    // z+가 카메라를 향하면 음수 → 반대방향이면 양수
+    const facing = dot < -0.85;
+    setIsFront(facing);
+
 
   });
 
   return (
     <mesh
       ref={meshRef}
-      onPointerEnter={() => isFront && setIsHovered(true)}
-      onPointerLeave={() => setIsHovered(false)}
-      onClick={() => isFront && onClick(index)}
+      onPointerEnter={(e) => {
+        if (!isFront) return;
+        setIsHovered(true);
+        e.stopPropagation();
+      }}
+      onPointerLeave={(e) => {
+        setIsHovered(false);
+        e.stopPropagation();
+      }}
+      onClick={(e) => {
+        if (!isFront) return;
+        onClick(index);
+        e.stopPropagation();
+      }}
     >
       <planeGeometry args={[2, 3, 32, 32]} />
       <shaderMaterial
@@ -174,16 +188,9 @@ const Test = () => {
   const [popupData, setPopupData] = useState({ title: "", description: "" });
 
   const contents = [
-    {
-      title: "👋 나의 소개",
-      extra: (
-        <div>
-          <img className="intro_img" src="./polioimg/image.png" alt="" />
-          <p>안녕하세요! 저는 창의적이고 사용자 경험 중심의 개발을 지향하는 프론트엔드 개발자입니다.</p>
-          <p>팀워크와 소통을 중시하며, 항상 새로운 기술을 배우고 적용하는 데에 열정을 가지고 있습니다.</p>
-        </div>
-      ),
-    },
+    
+      MyIntro
+    ,
     {
       title: "💻 나의 스킬",
       extra: (
@@ -253,7 +260,10 @@ const Test = () => {
 
   return (
     <div style={{ width: "100vw", height: "100vh", background: "#000", position: "relative" }}>
+      {/* ✅ RainCanvas를 가장 먼저 렌더링 */}
+
       <Canvas
+        style={{ zIndex: 1 }}
         camera={{
           position: [0, 4, 8],
           fov: 45,
@@ -264,14 +274,14 @@ const Test = () => {
         <color attach="background" args={["#000"]} />
         <ambientLight intensity={0.5} />
         <pointLight position={[10, 10, 10]} intensity={1} />
+        <RainEffect />
         <Scene onPaperClick={handlePaperClick} />
 
-        {/* ✅ 마우스 드래그만 허용, 스크롤 금지 */}
         <OrbitControls
           enableDamping={true}
           dampingFactor={0.1}
-          enableZoom={false} // ✅ scroll로 줌 막음
-          enablePan={false}  // ⛔ 옵션: 마우스로 끌어 움직이는 것도 막을 수 있음
+          enableZoom={false}
+          enablePan={false}
         />
       </Canvas>
 
