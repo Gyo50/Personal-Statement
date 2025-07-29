@@ -2,6 +2,11 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+    outline: none;
+}
+
+.scroll::-webkit-scrollbar {
+  display: none;
 }
 
 body {
@@ -12,6 +17,7 @@ body {
   align-items: center;
   background: #333;
 }
+
 
 .scene {
   perspective: 1000px;
@@ -43,8 +49,8 @@ body {
   background-color: rgba(0, 0, 0, 0.6);
   display: flex;
   justify-content: center;
-  align-items: center;
   z-index: 999;
+  -ms-overflow-style: none;
 }
 
 .modal-content {
@@ -55,6 +61,12 @@ body {
   text-align: center;
   font-size: 18px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  overflow-y: scroll;
+}
+
+
+.modal-content::-webkit-scrollbar {
+  display: none;
 }
 
 .modal-content h2 {
