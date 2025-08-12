@@ -58,36 +58,32 @@ const Modal = ({ visible, onClose, title, extra }) => {
 };
 
 
-// ✅ Paper 컴포넌트 (동일)
-const Paper = ({ index, scroll, texture, onClick }) => {
+const Paper = ({ index, scroll, texture, onClick, totalCards }) => {
   const meshRef = useRef();
   const [isHovered, setIsHovered] = useState(false);
   const [isFront, setIsFront] = useState(false);
   const entryStart = useRef(null);
-
 
   const uniforms = useRef({
     uTime: { value: 0 },
     uHover: { value: 0 },
     uTexture: { value: texture },
   });
-  const totalCards = 6;
-  const radius = 3;
-  const travelDuration = 1; // 이동 애니메이션 시간 (초)
-  const [travelDone, setTravelDone] = useState(false);
 
+  const radius = 3;
+  const travelDuration = 1;
+  const [travelDone, setTravelDone] = useState(false);
 
   useFrame((state) => {
     uniforms.current.uTime.value = state.clock.elapsedTime;
 
-    // 진행 시간 계산
     if (entryStart.current === null) entryStart.current = state.clock.elapsedTime;
     const elapsed = state.clock.elapsedTime - entryStart.current;
     const t = Math.min(elapsed / travelDuration, 1);
-    const ease = t * t * (3 - 2 * t); // easeInOut
+    const ease = t * t * (3 - 2 * t);
 
-    const finalAngle = (index * Math.PI * 2) / totalCards; // 최종 위치 각도
-    const startAngle = finalAngle + Math.PI / 1; // 오른쪽에서 시작
+    const finalAngle = (index * Math.PI * 2) / totalCards;
+    const startAngle = finalAngle + Math.PI / 1;
 
     const currentAngle = startAngle + (finalAngle - startAngle) * ease;
 
@@ -102,7 +98,6 @@ const Paper = ({ index, scroll, texture, onClick }) => {
     const scale = startScale + (1 - startScale) * ease;
     meshRef.current.scale.set(scale, scale, scale);
 
-    // Hover 회전
     const targetRotationX = isHovered ? -(Math.PI / 180) * 30 : 0;
     meshRef.current.rotation.x += (targetRotationX - meshRef.current.rotation.x) * 0.1;
     uniforms.current.uHover.value += ((isHovered ? 1 : 0) - uniforms.current.uHover.value) * 0.1;
@@ -111,22 +106,16 @@ const Paper = ({ index, scroll, texture, onClick }) => {
       setTravelDone(true);
     }
 
-    // 👉 정면 판별 로직
     const camera = state.camera;
-
     const cardForward = new THREE.Vector3(0, 0, 1);
-    cardForward.applyQuaternion(meshRef.current.quaternion); // 회전된 방향으로 바꿔줌
+    cardForward.applyQuaternion(meshRef.current.quaternion);
 
     const cameraDirection = new THREE.Vector3();
     camera.getWorldDirection(cameraDirection).normalize();
 
     const dot = cardForward.dot(cameraDirection);
-
-    // z+가 카메라를 향하면 음수 → 반대방향이면 양수
     const facing = dot < -0.85;
     setIsFront(facing);
-
-
   });
 
   return (
@@ -160,7 +149,7 @@ const Paper = ({ index, scroll, texture, onClick }) => {
 };
 
 // ✅ Scene 컴포넌트
-const Scene = ({ onPaperClick }) => {
+const Scene = ({ onPaperClick, contents }) => {
   const [scroll, setScroll] = useState(0);
   const texture = useTexture("https://www.fl-ex.co.kr/images/class/student/ljb-mc1th.jpg");
 
@@ -174,13 +163,18 @@ const Scene = ({ onPaperClick }) => {
 
   return (
     <group>
-      {Array.from({ length: 6 }, (_, i) => (
-        <Paper key={i} index={i} scroll={scroll} texture={texture} onClick={onPaperClick} />
+      {contents.map((_, i) => (
+        <Paper
+          key={i}
+          index={i}
+          scroll={scroll}
+          texture={texture}
+          onClick={onPaperClick}
+          totalCards={contents.length} // 카드 개수 전달
+        />
       ))}
     </group>
   );
-
-
 };
 
 // ✅ Main (Test) 컴포넌트
@@ -266,7 +260,7 @@ const Test = () => {
         <ambientLight intensity={0.5} />
         <pointLight position={[10, 10, 10]} intensity={1} />
         <RainEffect />
-        <Scene onPaperClick={handlePaperClick} />
+        <Scene onPaperClick={handlePaperClick} contents={contents}/>
 
         <OrbitControls
           enableDamping={true}
