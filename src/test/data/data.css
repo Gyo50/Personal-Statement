@@ -1,3 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.myself_p {
+    margin: 0 !important;
+    padding: 5px 10px;
+}
+.myself_p .p_title {
+    font-weight: 800;
+}

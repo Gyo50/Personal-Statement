@@ -51,6 +51,7 @@ body {
   justify-content: center;
   z-index: 999;
   -ms-overflow-style: none;
+  align-items: center;
 }
 
 .modal-content {
