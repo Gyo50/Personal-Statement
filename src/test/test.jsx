@@ -1,12 +1,14 @@
 // Test.jsx
 
 import React, { useRef, useEffect, useState } from "react";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import { useTexture } from "@react-three/drei";
 import * as THREE from "three";
 import RainEffect from "./raineffect";
 import "./styles.css";
+import Myintroimg from "./data/dataimg/myintro.png"
+import Myskillimg from "./data/dataimg/myskill.png"
 import MyIntro from "./data/myself";
 import Myskill from "./data/myskill";
 
@@ -58,11 +60,13 @@ const Modal = ({ visible, onClose, title, extra }) => {
 };
 
 
-const Paper = ({ index, scroll, texture, onClick, totalCards }) => {
+const Paper = ({ index, scroll, image, onClick, totalCards }) => {
   const meshRef = useRef();
   const [isHovered, setIsHovered] = useState(false);
   const [isFront, setIsFront] = useState(false);
   const entryStart = useRef(null);
+
+  const texture = useTexture(image);
 
   const uniforms = useRef({
     uTime: { value: 0 },
@@ -151,7 +155,6 @@ const Paper = ({ index, scroll, texture, onClick, totalCards }) => {
 // ✅ Scene 컴포넌트
 const Scene = ({ onPaperClick, contents }) => {
   const [scroll, setScroll] = useState(0);
-  const texture = useTexture("https://www.fl-ex.co.kr/images/class/student/ljb-mc1th.jpg");
 
   useEffect(() => {
     const handleScroll = (e) => {
@@ -163,17 +166,17 @@ const Scene = ({ onPaperClick, contents }) => {
 
   return (
     <group>
-      {contents.map((_, i) => (
-        <Paper
-          key={i}
-          index={i}
-          scroll={scroll}
-          texture={texture}
-          onClick={onPaperClick}
-          totalCards={contents.length} // 카드 개수 전달
-        />
-      ))}
-    </group>
+  {contents.map((content, i) => (
+    <Paper
+      key={i}
+      index={i}
+      scroll={scroll}
+      image={content.image}   // ✅ 카드별 이미지 전달
+      onClick={onPaperClick}
+      totalCards={contents.length}
+    />
+  ))}
+</group>
   );
 };
 
@@ -186,10 +189,12 @@ const Test = () => {
   {
     title: "👤 나에 대해",
     extra: <MyIntro />,
+    image: Myintroimg,
   },
     {
       title: "💻 나의 스킬",
       extra: <Myskill />,
+      image: Myskillimg,
     },
     {
       title: "📁 프로젝트 1 – 포트폴리오 생성기",
@@ -200,6 +205,7 @@ const Test = () => {
           <a href="https://gyo50.github.io/Nexon.github.io/" target="_blank" rel="noopener noreferrer">👉 데모 보기</a>
         </div>
       ),
+      image: "https://www.fl-ex.co.kr/images/class/student/ljb-mc1th.jpg",
     },
     {
       title: "📁 프로젝트 2 – 3D 인터랙티브 뷰어",
@@ -210,6 +216,7 @@ const Test = () => {
           <a href="https://gyo50.github.io/Micro.github.io/" target="_blank" rel="noopener noreferrer">👉 데모 보기</a>
         </div>
       ),
+      image: "https://www.fl-ex.co.kr/images/class/student/ljb-mc1th.jpg",
     },
     {
       title: "📁 프로젝트 3 – 실시간 협업툴",
@@ -223,6 +230,7 @@ const Test = () => {
           </ul>
         </div>
       ),
+      image: "https://www.fl-ex.co.kr/images/class/student/ljb-mc1th.jpg",
     },
     {
       title: "📁 프로젝트 4 – 여행 기록 앱",
@@ -233,6 +241,7 @@ const Test = () => {
           <p>사진과 메모를 함께 저장하여 여행 추억을 간직할 수 있는 기능을 구현했습니다.</p>
         </div>
       ),
+      image: "https://www.fl-ex.co.kr/images/class/student/ljb-mc1th.jpg",
     },
   ];
 
@@ -260,7 +269,7 @@ const Test = () => {
         <ambientLight intensity={0.5} />
         <pointLight position={[10, 10, 10]} intensity={1} />
         <RainEffect />
-        <Scene onPaperClick={handlePaperClick} contents={contents}/>
+        <Scene onPaperClick={handlePaperClick}  contents={contents}/>
 
         <OrbitControls
           enableDamping={true}

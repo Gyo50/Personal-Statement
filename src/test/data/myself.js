@@ -7,7 +7,7 @@ export default function Myself() {
   return (
     <>
       <div className='flex mt-10'>
-        <div className="basis-1/2 flex flex-col justify-between">
+        <div className="basis-1/2 flex flex-col justify-be">
           <div className=''>
             <img src={myimg} className='w-48 h-auto rounded-3xl' alt="내 사진"/>
           </div>
@@ -35,4 +35,3 @@ export default function Myself() {
     </>
   )
 }
-
