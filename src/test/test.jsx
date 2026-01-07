@@ -7,10 +7,13 @@ import { useTexture } from "@react-three/drei";
 import * as THREE from "three";
 import RainEffect from "./raineffect";
 import "./styles.css";
-import Myintroimg from "./data/dataimg/myintro.png"
+import Aboutme from "./data/dataimg/Aboutme.png"
 import Myskillimg from "./data/dataimg/myskill.png"
-import MyIntro from "./data/myself";
-import Myskill from "./data/myskill";
+import Nexonimg from "./data/dataimg/Nexon.png"
+import MyIntro from "./data/contents/myself";
+import Myskill from "./data/contents/myskill";
+import Nexon from "./data/contents/nexon";
+import Diptyque from "./data/contents/diptyque";
 
 // ---------------------- Vertex Shader ----------------------
 const vertexShader = `
@@ -171,7 +174,7 @@ const Scene = ({ onPaperClick, contents }) => {
       key={i}
       index={i}
       scroll={scroll}
-      image={content.image}   // ✅ 카드별 이미지 전달
+      image={content.image}  
       onClick={onPaperClick}
       totalCards={contents.length}
     />
@@ -189,7 +192,7 @@ const Test = () => {
   {
     title: "👤 나에 대해",
     extra: <MyIntro />,
-    image: Myintroimg,
+    image: Aboutme,
   },
     {
       title: "💻 나의 스킬",
@@ -197,25 +200,13 @@ const Test = () => {
       image: Myskillimg,
     },
     {
-      title: "📁 프로젝트 1 – 포트폴리오 생성기",
-      extra: (
-        <div>
-          <p><strong>설명:</strong> GPT 기반 자기소개 페이지 자동 생성 도구</p>
-          <p><strong>기능:</strong> 사용자가 입력한 정보로 자동 생성되는 이력서/포트폴리오</p>
-          <a href="https://gyo50.github.io/Nexon.github.io/" target="_blank" rel="noopener noreferrer">👉 데모 보기</a>
-        </div>
-      ),
-      image: "https://www.fl-ex.co.kr/images/class/student/ljb-mc1th.jpg",
+      title: "📁 넥슨 포트폴리오",
+      extra: <Nexon/>,
+      image: Nexonimg,
     },
     {
       title: "📁 프로젝트 2 – 3D 인터랙티브 뷰어",
-      extra: (
-        <div>
-          <p><strong>설명:</strong> Three.js 기반 학습 도구 (3D 객체 회전, 확대/축소 가능)</p>
-          <p><strong>기술:</strong> React Three Fiber, GLSL Shader</p>
-          <a href="https://gyo50.github.io/Micro.github.io/" target="_blank" rel="noopener noreferrer">👉 데모 보기</a>
-        </div>
-      ),
+      extra: <Diptyque />,
       image: "https://www.fl-ex.co.kr/images/class/student/ljb-mc1th.jpg",
     },
     {

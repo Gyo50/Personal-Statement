@@ -1,7 +1,7 @@
 import React from 'react'
-import '../../App.css';
-import './data.css';
-import myimg from './dataimg/myimg.jpg';
+import '../../../App.css';
+import '../data.css';
+import myimg from '../dataimg/myimg.jpg';
 
 export default function Myself() {
   return (
