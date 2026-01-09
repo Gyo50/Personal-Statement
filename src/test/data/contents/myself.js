@@ -1,15 +1,15 @@
 import React from 'react'
 import '../../../App.css';
 import '../data.css';
-import myimg from '../dataimg/myimg.jpg';
+import profileimg from '../dataimg/profileimg.jpg';
 
 export default function Myself() {
   return (
     <>
       <div className='flex mt-10'>
         <div className="basis-1/2 flex flex-col justify-be">
-          <div className=''>
-            <img src={myimg} className='w-48 h-auto rounded-3xl' alt="내 사진"/>
+          <div className='flex justify-center mb-3'>
+            <img src={profileimg} className='w-48 h-auto rounded-3xl' alt="내 사진"/>
           </div>
           <div className='border-double'>
             <div className=''>

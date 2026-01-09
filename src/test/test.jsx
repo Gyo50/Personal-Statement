@@ -10,6 +10,7 @@ import "./styles.css";
 import Aboutme from "./data/dataimg/Aboutme.png"
 import Myskillimg from "./data/dataimg/myskill.png"
 import Nexonimg from "./data/dataimg/Nexon.png"
+import Diptyqueimg from "./data/dataimg/diptyque.png";
 import MyIntro from "./data/contents/myself";
 import Myskill from "./data/contents/myskill";
 import Nexon from "./data/contents/nexon";
@@ -200,14 +201,14 @@ const Test = () => {
       image: Myskillimg,
     },
     {
-      title: "📁 넥슨 포트폴리오",
+      title: "📁 넥슨 게임즈",
       extra: <Nexon/>,
       image: Nexonimg,
     },
     {
-      title: "📁 프로젝트 2 – 3D 인터랙티브 뷰어",
+      title: "📁 딥 디크",
       extra: <Diptyque />,
-      image: "https://www.fl-ex.co.kr/images/class/student/ljb-mc1th.jpg",
+      image: Diptyqueimg,
     },
     {
       title: "📁 프로젝트 3 – 실시간 협업툴",
