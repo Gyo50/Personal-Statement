@@ -11,6 +11,7 @@ import Aboutme from "./data/dataimg/Aboutme.png"
 import Myskillimg from "./data/dataimg/myskill.png"
 import Nexonimg from "./data/dataimg/Nexon.png"
 import Diptyqueimg from "./data/dataimg/diptyque.png";
+import Defaultimg from "./data/dataimg/Default.png"
 import MyIntro from "./data/contents/myself";
 import Myskill from "./data/contents/myskill";
 import Nexon from "./data/contents/nexon";
@@ -211,29 +212,14 @@ const Test = () => {
       image: Diptyqueimg,
     },
     {
-      title: "📁 프로젝트 3 – 실시간 협업툴",
+      title: "📁 SCM",
       extra: (
-        <div>
-          <p><strong>설명:</strong> WebSocket 기반 채팅 및 문서 편집 기능 구현</p>
-          <p><strong>기술:</strong> React, Socket.IO, Quill.js</p>
-          <ul>
-            <li>✅ 사용자 간 실시간 동기화</li>
-            <li>✅ 간단한 권한 분기 시스템</li>
-          </ul>
+        <div className="flex items-center justify-center flex-col">
+          <p><strong>프로제트 완료 후 작성 예정(2월)</strong></p>
+          <p><strong>SCM(study cafe map)으로 개인적으로 카페를 찾기 위한 웹앱으로 만드는중</strong></p>
         </div>
       ),
-      image: "https://www.fl-ex.co.kr/images/class/student/ljb-mc1th.jpg",
-    },
-    {
-      title: "📁 프로젝트 4 – 여행 기록 앱",
-      extra: (
-        <div>
-          <p><strong>설명:</strong> 여행지 사진, 위치, 날짜 기록이 가능한 모바일 앱</p>
-          <p><strong>기술:</strong> React Native, Firebase, Google Maps API</p>
-          <p>사진과 메모를 함께 저장하여 여행 추억을 간직할 수 있는 기능을 구현했습니다.</p>
-        </div>
-      ),
-      image: "https://www.fl-ex.co.kr/images/class/student/ljb-mc1th.jpg",
+      image: Defaultimg,
     },
   ];
 
