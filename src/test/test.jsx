@@ -51,14 +51,49 @@ const fragmentShader = `
 
 // ---------------------- Modal Component ----------------------
 const Modal = ({ visible, onClose, title, extra }) => {
+  const [isDark, setIsDark] = useState(false);
+
   if (!visible) return null;
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <h2>{title}</h2>
-        <div className="modal-extra">{extra}</div>
-        <button onClick={onClose} className="modal-close">닫기</button>
+    <div className="modal-overlay" onClick={onClose} style={{ zIndex: 100 }}>
+      <div
+        className={`modal-content transition-all duration-500 ${isDark ? 'bg-gray-900 text-white' : 'bg-white text-gray-800'}`}
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          borderRadius: '30px',
+          padding: '2rem',
+          width: '90%',
+          maxWidth: '700px',
+          position: 'relative',
+          border: isDark ? '1px solid #374151' : '1px solid #e5e7eb',
+          boxShadow: isDark ? '0 10px 30px rgba(0,0,0,0.5)' : '0 10px 30px rgba(0,0,0,0.1)'
+        }}
+      >
+        <div className="flex justify-between items-center mb-8">
+          <h2 className={`text-3xl font-black ${isDark ? 'text-blue-600' : 'text-blue-400'}`}>{title}</h2>
+
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-bold opacity-60">{isDark ? "DARK" : "LIGHT"}</span>
+              <button
+                onClick={() => setIsDark(!isDark)}
+                className={`relative w-14 h-7 flex items-center rounded-full p-1 transition-colors duration-300 ${isDark ? 'bg-blue-600' : 'bg-gray-300'}`}
+              >
+                <div
+                  className={`bg-white w-5 h-5 rounded-full shadow-md transform transition-transform duration-300 flex items-center justify-center text-[10px] ${isDark ? 'translate-x-7' : 'translate-x-0'}`}
+                >
+                  {isDark ? '🌙' : '☀️'}
+                </div>
+              </button>
+            </div>
+            <button onClick={onClose} className="text-2xl hover:rotate-90 transition-transform ml-2">✕</button>
+          </div>
+        </div>
+
+        <div className="modal-extra">
+          {React.isValidElement(extra) ? React.cloneElement(extra, { isDark }) : extra}
+        </div>
       </div>
     </div>
   );
@@ -157,7 +192,7 @@ const Paper = ({ index, scroll, image, onClick, totalCards }) => {
   );
 };
 
-// ✅ Scene 컴포넌트
+// Scene 컴포넌트
 const Scene = ({ onPaperClick, contents }) => {
   const [scroll, setScroll] = useState(0);
 
@@ -171,31 +206,31 @@ const Scene = ({ onPaperClick, contents }) => {
 
   return (
     <group>
-  {contents.map((content, i) => (
-    <Paper
-      key={i}
-      index={i}
-      scroll={scroll}
-      image={content.image}  
-      onClick={onPaperClick}
-      totalCards={contents.length}
-    />
-  ))}
-</group>
+      {contents.map((content, i) => (
+        <Paper
+          key={i}
+          index={i}
+          scroll={scroll}
+          image={content.image}
+          onClick={onPaperClick}
+          totalCards={contents.length}
+        />
+      ))}
+    </group>
   );
 };
 
-// ✅ Main (Test) 컴포넌트
+// Main (Test) 컴포넌트
 const Test = () => {
   const [popupVisible, setPopupVisible] = useState(false);
   const [popupData, setPopupData] = useState({ title: "", description: "" });
 
   const contents = [
-  {
-    title: "👤 나에 대해",
-    extra: <MyIntro />,
-    image: Aboutme,
-  },
+    {
+      title: "👤 나에 대해",
+      extra: <MyIntro />,
+      image: Aboutme,
+    },
     {
       title: "💻 나의 스킬",
       extra: <Myskill />,
@@ -203,7 +238,7 @@ const Test = () => {
     },
     {
       title: "📁 넥슨 게임즈",
-      extra: <Nexon/>,
+      extra: <Nexon />,
       image: Nexonimg,
     },
     {
@@ -232,8 +267,7 @@ const Test = () => {
 
   return (
     <div style={{ width: "100vw", height: "100vh", background: "#000", position: "relative" }}>
-      {/* ✅ RainCanvas를 가장 먼저 렌더링 */}
-
+      {/* RainCanvas를 가장 먼저 렌더링 */}
       <Canvas
         style={{ zIndex: 1 }}
         camera={{
@@ -247,7 +281,7 @@ const Test = () => {
         <ambientLight intensity={0.5} />
         <pointLight position={[10, 10, 10]} intensity={1} />
         <RainEffect />
-        <Scene onPaperClick={handlePaperClick}  contents={contents}/>
+        <Scene onPaperClick={handlePaperClick} contents={contents} />
 
         <OrbitControls
           enableDamping={true}

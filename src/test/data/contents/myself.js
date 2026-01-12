@@ -1,37 +1,82 @@
-import React from 'react'
-import '../../../App.css';
-import '../data.css';
+import React from 'react';
 import profileimg from '../dataimg/profileimg.jpg';
 
-export default function Myself() {
+export default function Myself({ isDark }) {
   return (
-    <>
-      <div className='flex mt-10'>
-        <div className="basis-1/2 flex flex-col justify-be">
-          <div className='flex justify-center mb-3'>
-            <img src={profileimg} className='w-48 h-auto rounded-3xl' alt="내 사진"/>
-          </div>
-          <div className='border-double'>
-            <div className=''>
-              <p className='myself_p'><span className='p_title'>이름</span> <br/>오영교</p>
-              <p className='myself_p'><span className='p_title'>생년월일</span> <br/>1999년 8월 22일 (만 25세)</p>
-              <p className='myself_p'><span className='p_title'>전화번호</span> <br/>010 - 8513 - 0528</p>
-              <p className='myself_p'><span className='p_title'>이메일</span> <br/>oey157@nate.com</p>
-              <p className='myself_p'><span className='p_title'>깃허브 주소</span> <br/><a className='underline' href='https://github.com/Gyo50'>https://github.com/Gyo50</a></p>
-            </div>
-          </div>
+    <div className="flex flex-col md:flex-row gap-12 items-start">
+      <div className="basis-2/5 flex flex-col items-center w-full">
+        <div className="relative group">
+          <div className={`absolute -inset-2 bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 rounded-[60px] blur-lg opacity-40 group-hover:opacity-100 transition duration-700`}></div>
+          
+          <img 
+            src={profileimg} 
+            className='relative w-56 h-full object-cover rounded-[50px] border-2 border-white/10 shadow-2xl transition-transform duration-500 group-hover:scale-[1.02]' 
+            alt="오영교 프로필"
+          />
         </div>
-        <div className='basis-1/2'>
-          <p className='myself_p'><span className='p_title'>학력</span> <br/>국제대학교 전문학사 2018 ~ 2023 <br/>동양미래대학교 학사 2023 ~ 2024 </p>
-          <p className='myself_p'><span className='p_title'>별명</span> <br/>소프트영 = 부드러운 성격과 학과명이 합쳐진 별명입니다</p>
-          <p className='myself_p'><span className='p_title'>MBTI</span> <br/>ESFJ</p>
-          <p className='myself_p'><span className='p_title'>성격</span> <br/>항상 긍정적이고 신중하게 계획하기 책임감을 느끼면서 꾸준히 노력하기</p>
-          <p className='myself_p'><span className='p_title'>가치관</span> <br/>oey157@nate.com</p>
-          <p className='myself_p'><span className='p_title'>인생모토</span> <br/>직업에서 행복을 찾아라 아니면 행복이 무엇인지 절대 모를것이다</p>
-          <p className='myself_p'><span className='p_title'>취미</span> <br/>취미, 운동, 독서</p>
-          <p className='myself_p'><span className='p_title'>목표</span> <br/>성장하고 배우면서 기억에 남는 사람이 되는 것</p>
+
+        <div className='mt-10 space-y-5 w-full bg-opacity-10 rounded-2xl p-4'>
+          <InfoItem label="이름" value="오영교" isDark={isDark} />
+          <InfoItem label="생년월일" value="1999년 8월 22일" isDark={isDark} />
+          <InfoItem label="전화번호" value="010 - 8513 - 0528" isDark={isDark} />
+          <InfoItem label="이메일" value="oey157@nate.com" isDark={isDark} />
+          <div className="text-left">
+            <span className={`text-xs font-bold uppercase tracking-wider ${isDark ? 'text-blue-400' : 'text-blue-600'}`}>Github</span>
+            <br />
+            <a href="https://github.com/Gyo50" target="_blank" rel="noreferrer" className="text-sm underline break-all opacity-80 hover:opacity-100">
+              github.com/Gyo50
+            </a>
+          </div>
         </div>
       </div>
-    </>
-  )
+
+      {/* 오른쪽: 상세 정보 카드 스타일 */}
+      <div className='basis-3/5 grid grid-cols-1 gap-4 w-full'>
+        <DetailCard title="🎓 학력" isDark={isDark}>
+          국제대학교 전문학사 (2018 ~ 2023)<br/>
+          동양미래대학교 학사 (2023 ~ 2024)
+        </DetailCard>
+        
+        <DetailCard title="✨ 별명" isDark={isDark}>
+          <span className="font-semibold text-blue-400">소프트영:</span> 부드러운 성격과 학과명이 합쳐진 이름입니다.
+        </DetailCard>
+
+        <div className="grid grid-cols-2 gap-4">
+          <DetailCard title="🧠 MBTI" isDark={isDark}>ESFJ</DetailCard>
+          <DetailCard title="🎨 취미" isDark={isDark}>운동, 독서</DetailCard>
+        </div>
+
+        <DetailCard title="🤝 성격 및 가치관" isDark={isDark}>
+          긍정적이고 신중한 계획파입니다. 책임감을 가지고 꾸준히 노력하는 것을 가치 있게 생각합니다.
+        </DetailCard>
+
+        <DetailCard title="💡 인생 모토" isDark={isDark}>
+          <p className="italic font-serif">"직업에서 행복을 찾아라. 아니면 행복이 무엇인지 절대 모를 것이다."</p>
+        </DetailCard>
+
+        <DetailCard title="🚀 목표" isDark={isDark}>
+          끊임없이 성장하여 타인의 기억에 남는 개발자가 되는 것
+        </DetailCard>
+      </div>
+    </div>
+  );
+}
+
+// 가독성을 위한 내부 컴포넌트
+function InfoItem({ label, value, isDark }) {
+  return (
+    <div className="text-left border-b border-gray-500/10 pb-2">
+      <span className={`text-xs font-bold uppercase tracking-wider ${isDark ? 'text-blue-400' : 'text-blue-600'}`}>{label}</span>
+      <p className="text-sm font-medium opacity-90">{value}</p>
+    </div>
+  );
+}
+
+function DetailCard({ title, children, isDark }) {
+  return (
+    <div className={`p-4 rounded-2xl transition-all duration-300 ${isDark ? 'bg-white/5 hover:bg-white/10' : 'bg-gray-100 hover:bg-gray-200'}`}>
+      <h4 className={`text-sm font-bold mb-1 ${isDark ? 'text-blue-300' : 'text-blue-700'}`}>{title}</h4>
+      <div className="text-sm leading-relaxed opacity-80">{children}</div>
+    </div>
+  );
 }
