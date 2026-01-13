@@ -1,72 +1,70 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react';
 
-export default function Myskill() {
+export default function Myskill({ isDark }) {
+    // 모달이 뜰 때 애니메이션을 시작하기 위한 상태
+    const [animate, setAnimate] = useState(false);
+
+    useEffect(() => {
+        // 컴포넌트 마운트 후 짧은 지연시간 뒤 애니메이션 시작
+        const timer = setTimeout(() => setAnimate(true), 100);
+        return () => clearTimeout(timer);
+    }, []);
+
+    // 스킬 데이터 정의 (이미지 주소와 숙련도 %)
+    const skillData = {
+        Frontend: [
+            { name: 'HTML5', percentage: 90, badge: "https://img.shields.io/badge/html5-E34F26?style=flat-square&logo=html5&logoColor=white" },
+            { name: 'CSS3', percentage: 85, badge: "https://img.shields.io/badge/css-1572B6?style=flat-square&logo=css3&logoColor=white" },
+            { name: 'JS', percentage: 80, badge: "https://img.shields.io/badge/javascript-F7DF1E?style=flat-square&logo=javascript&logoColor=black" },
+            { name: 'jQuery', percentage: 65, badge: "https://img.shields.io/badge/jQuery-0769AD?style=flat-square&logo=jquery&logoColor=white" },
+            { name: 'React', percentage: 75, badge: "https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=react&logoColor=black" },
+            { name: 'Next.js', percentage: 60, badge: "https://img.shields.io/badge/Next.js-000000?style=flat-square&logo=next.js&logoColor=white" },
+            { name: 'Tailwind CSS', percentage: 70, badge: "https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white" },
+            { name: 'TypeScript', percentage: 65, badge: "https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white" },                                                    
+        ],
+        Backend: [
+            { name: 'Java', percentage: 60, badge: "https://img.shields.io/badge/Java-007396?style=flat-square&logo=Java&logoColor=white" },
+            { name: 'Node.js', percentage: 60, badge: "https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=node.js&logoColor=white" },
+            { name: 'Python', percentage: 45, badge: "https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white" },
+            { name: 'C++', percentage: 50, badge: "https://img.shields.io/badge/-C++-00599C?style=flat-square&logo=c%2B%2B&logoColor=white" },
+            { name: 'C#', percentage: 55, badge: "https://img.shields.io/badge/-C%23-239120?style=flat-square&logo=c-sharp&logoColor=white" },
+        ],
+        Database: [
+            { name: 'MySQL', percentage: 55, badge: "https://img.shields.io/badge/mysql-4479A1?style=flat-square&logo=mysql&logoColor=white" },
+            { name: 'MongoDB', percentage: 60, badge: "https://img.shields.io/badge/-MongoDB-13aa52?style=flat-square&logo=mongodb&logoColor=white" },
+        ]
+    };
+
     return (
-        <>
-            <div className='mt-5'>
-                <p><strong>Frontend</strong></p>
-                <div className='flex justify-center items-center gap-5 m-5'>
-                    <img alt='Html' src="https://img.shields.io/badge/html5-E34F26?style=flat-square&logo=html5&logoColor=white" />
-                    <img alt='CSS' src="https://img.shields.io/badge/css-1572B6?style=flat-square&logo=css3&logoColor=white" />
-                    <img alt='JS' src="https://img.shields.io/badge/javascript-F7DF1E?style=flat-square&logo=javascript&logoColor=black" />
-                    <img alt='React' src="https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=react&logoColor=black" />
-                    <img alt='JQery' src="https://img.shields.io/badge/JQuery-0769AD?style=flat-square&logo=jquery&logoColor=white" />
-                    <img alt='TS' src="https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white" />
-                </div>
-            </div>
-            <div className='mt-5'>
-                <p><strong>Backend</strong></p>
-                <div className='flex justify-center items-center gap-5 m-5'>
-                    <img alt='JAVA' src="https://img.shields.io/badge/Java-007396?style=for-the-badge&logo=Java&logoColor=white" />
-                    <img alt='Node.js' src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white" />
-                    <img alt='Python' src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" />
-                </div>
-            </div>
-            <div className='mt-5'>
-                <p><strong>Database</strong></p>
-                <div className='flex justify-center items-center gap-5 m-5'>
-                    <img alt='MYSQL' src="https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=white" />
-                    <img alt='MongDB' src="https://img.shields.io/badge/-MongoDB-13aa52?style=for-the-badge&logo=mongodb&logoColor=white" />
-                </div>
-            </div>
-            <div className='mt-5'>
-                <p><strong>Server</strong></p>
-                <div className='flex justify-center items-center gap-5 m-5'>
-                    <img alt='LINUX' src="https://img.shields.io/badge/linux-FCC624?style=for-the-badge&logo=linux&logoColor=black" />
-                </div>
-            </div>
-            <div className='mt-5'>
-                <p><strong>Development Tools</strong></p>
-                <div>
-                    <div className='flex justify-center items-center gap-5 m-5'>
-                        <img alt='Visual Stdio Code' src="https://img.shields.io/badge/Visual Studio Code-007ACC?style=flat-square&logo=visual-studio-code&logoColor=white" />
-                        <img alt='Visual  Stdio' src="https://img.shields.io/badge/Visual Studio-5C2D91?style=flat-square&logo=visual-studio&logoColor=white" />
-                        <img alt='Jupyter Notebook' src="https://img.shields.io/badge/Jupyter%20Notebook-F37626?style=flat-square&logo=jupyter&logoColor=white" />
-                    </div>
-                    <div className='flex justify-center items-center gap-5 mt-5'>
-                        <img alt='Edipse' src="https://img.shields.io/badge/Eclipse IDE-2C2255?style=flat-square&logo=eclipse-ide&logoColor=white" />
-                        <img alt='Anaconda' src="https://img.shields.io/badge/Anaconda-44A833?style=flat-square&logo=anaconda&logoColor=white" />
-                        <img alt='Android Studio' src="https://img.shields.io/badge/Android Studio-3DDC84?style=flat-square&logo=Android Studio&logoColor=white" />
+        <div className={`space-y-8 p-2 ${isDark ? 'text-white' : 'text-gray-800'}`}>
+            {Object.entries(skillData).map(([category, skills]) => (
+                <div key={category} className="animate-fadeIn">
+                    <h3 className={`text-lg font-bold mb-4 border-l-4 pl-3 ${isDark ? 'border-blue-400' : 'border-blue-600'}`}>
+                        {category}
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {skills.map((skill) => (
+                            <div key={skill.name} className="flex flex-col gap-2">
+                                <div className="flex justify-between items-center">
+                                    <img src={skill.badge} alt={skill.name} className="h-5" />
+                                    <span className="text-xs font-mono">{animate ? skill.percentage : 0}%</span>
+                                </div>
+                                {/* 프로그래스 바 배경 */}
+                                <div className={`w-full h-2 rounded-full overflow-hidden ${isDark ? 'bg-gray-700' : 'bg-gray-200'}`}>
+                                    {/* 실제 차오르는 바 */}
+                                    <div
+                                        className={`h-full transition-all duration-1000 ease-out rounded-full ${isDark ? 'bg-blue-400' : 'bg-blue-600'}`}
+                                        style={{
+                                            width: animate ? `${skill.percentage}%` : '0%',
+                                            boxShadow: isDark ? '0 0 10px rgba(96, 165, 250, 0.5)' : 'none'
+                                        }}
+                                    />
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 </div>
-            </div>
-            <div className='mt-5'>
-                <p><strong>Version Control</strong></p>
-                <div className='flex justify-center items-center gap-5 m-5'>
-                    <img alt='Git' src="https://img.shields.io/badge/Git-F05032?style=flat-square&logo=git&logoColor=white" />
-                    <img alt='GitHub' src="https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github&logoColor=white" />
-                </div>
-            </div>
-            <div className='mt-5'>
-
-                <p><strong>Communication</strong></p>
-                <div className='flex justify-center items-center gap-5 m-5'>
-                    <img alt='Fimga' src="https://img.shields.io/badge/Figma-F24E1E?style=flat-square&logo=figma&logoColor=white" />
-                    <img alt='Adobe Photoshop' src="https://img.shields.io/badge/Adobe%20Photoshop-%231e1e1e?style=flat-square&logo=adobephotoshop&logoColor=white" />
-                </div>
-            </div>
-
-        </>
-    )
+            ))}
+        </div>
+    );
 }
-
