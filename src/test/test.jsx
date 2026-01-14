@@ -1,345 +1,84 @@
-// Test.jsx
-
-import React, { useRef, useEffect, useState } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
+import React, { useState } from "react";
+import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
-import { useTexture } from "@react-three/drei";
-import * as THREE from "three";
 import RainEffect from "./raineffect";
-import "./styles.css";
-import Aboutme from "./data/dataimg/Aboutme.png"
-import Myskillimg from "./data/dataimg/myskill.png"
-import Nexonimg from "./data/dataimg/Nexon.png"
-import Diptyqueimg from "./data/dataimg/diptyque.png";
-import Defaultimg from "./data/dataimg/Default.png"
-import MyIntro from "./data/contents/myself";
-import Myskill from "./data/contents/myskill";
-import Nexon from "./data/contents/nexon";
-import Diptyque from "./data/contents/diptyque";
+import Paper from "./components/Paper";
+import Modal from "./components/common/Modal";
 
-// ---------------------- Vertex Shader ----------------------
-const vertexShader = `
-  uniform float uTime;
-  uniform float uHover;
-  varying vec2 vUv;
+// Test.jsx (상대 경로 확인: Test.jsx가 src/test 폴더에 있다면)
+import Aboutme from './assets/images/Aboutme.png';
+import Myskillimg from './assets/images/myskill.png';
+import Nexonimg from './assets/images/Nexon.png';
+import DiptyqueImg from './assets/images/diptyque.png';
+import Defaultimg from './assets/images/Default.png';
 
-  void main() {
-    vUv = uv;
-    vec3 pos = position;
+// 컨텐츠 컴포넌트
+import MyIntro from "../test/components/contents/myself";
+import Myskill from "../test/components/contents/myskill";
+import Nexon from "../test/components/contents/nexon";
+import Diptyque from "../test/components/contents/diptyque";
 
-    float baseWave = -(pow(pos.x * 0.8, 2.0)) * 0.3;
-    float hoverWave = sin(pos.x * 1.0 + uTime) * 0.5 * uHover;
-
-    pos.z += baseWave + hoverWave;
-
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
-  }
-`;
-
-// ---------------------- Fragment Shader ----------------------
-const fragmentShader = `
-  uniform sampler2D uTexture;
-  uniform float uHover;
-  varying vec2 vUv;
-
-  void main() {
-    vec4 texture = texture2D(uTexture, vUv);
-    float opacity = gl_FrontFacing ? 1.0 : 0.2;
-    gl_FragColor = vec4(texture.rgb, texture.a * opacity);
-  }
-`;
-
-// ---------------------- Modal Component ----------------------
-const Modal = ({ visible, onClose, title, extra }) => {
-  const [isDark, setIsDark] = useState(false);
-
-  if (!visible) return null;
-
-  return (
-    <div className="modal-overlay" onClick={onClose} style={{ zIndex: 100 }}>
-      <div
-        className={`modal-content transition-all duration-500 ${isDark ? 'bg-gray-900 text-white' : 'bg-white text-gray-800'}`}
-        onClick={(e) => e.stopPropagation()}
-        style={{
-          borderRadius: '30px',
-          padding: '2rem',
-          width: '90%',
-          maxWidth: '700px',
-          position: 'relative',
-          border: isDark ? '1px solid #374151' : '1px solid #e5e7eb',
-          boxShadow: isDark ? '0 10px 30px rgba(0,0,0,0.5)' : '0 10px 30px rgba(0,0,0,0.1)'
-        }}
-      >
-        <div className="flex justify-between items-center mb-8">
-          <h2 className={`text-3xl font-black ${isDark ? 'text-blue-600' : 'text-blue-400'}`}>{title}</h2>
-
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-bold opacity-60">{isDark ? "DARK" : "LIGHT"}</span>
-              <button
-                onClick={() => setIsDark(!isDark)}
-                className={`relative w-14 h-7 flex items-center rounded-full p-1 transition-colors duration-300 ${isDark ? 'bg-blue-600' : 'bg-gray-300'}`}
-              >
-                <div
-                  className={`bg-white w-5 h-5 rounded-full shadow-md transform transition-transform duration-300 flex items-center justify-center text-[10px] ${isDark ? 'translate-x-7' : 'translate-x-0'}`}
-                >
-                  {isDark ? '🌙' : '☀️'}
-                </div>
-              </button>
-            </div>
-            <button onClick={onClose} className="text-2xl hover:rotate-90 transition-transform ml-2">✕</button>
-          </div>
-        </div>
-
-        <div className="modal-extra">
-          {React.isValidElement(extra) ? React.cloneElement(extra, { isDark }) : extra}
-        </div>
-      </div>
-    </div>
-  );
-};
-
-
-const Paper = ({ index, scroll, image, onClick, totalCards }) => {
-  const meshRef = useRef();
-  const [isHovered, setIsHovered] = useState(false);
-  const [isFront, setIsFront] = useState(false);
-  const entryStart = useRef(null);
-
-  const texture = useTexture(image);
-
-  const uniforms = useRef({
-    uTime: { value: 0 },
-    uHover: { value: 0 },
-    uTexture: { value: texture },
-  });
-
-  const radius = 3;
-  const travelDuration = 1;
-  const [travelDone, setTravelDone] = useState(false);
-
-  useFrame((state) => {
-    uniforms.current.uTime.value = state.clock.elapsedTime;
-
-    if (entryStart.current === null) entryStart.current = state.clock.elapsedTime;
-    const elapsed = state.clock.elapsedTime - entryStart.current;
-    const t = Math.min(elapsed / travelDuration, 1);
-    const ease = t * t * (3 - 2 * t);
-
-    const finalAngle = (index * Math.PI * 2) / totalCards;
-    const startAngle = finalAngle + Math.PI / 1;
-
-    const currentAngle = startAngle + (finalAngle - startAngle) * ease;
-
-    const x = Math.sin(currentAngle) * radius;
-    const z = Math.cos(currentAngle) * radius;
-    const yRot = ((currentAngle + Math.PI) % (Math.PI * 2)) - Math.PI;
-
-    meshRef.current.position.set(x, 0, z);
-    meshRef.current.rotation.y = yRot;
-
-    const startScale = 1.4;
-    const scale = startScale + (1 - startScale) * ease;
-    meshRef.current.scale.set(scale, scale, scale);
-
-    const targetRotationX = isHovered ? -(Math.PI / 180) * 30 : 0;
-    meshRef.current.rotation.x += (targetRotationX - meshRef.current.rotation.x) * 0.1;
-    uniforms.current.uHover.value += ((isHovered ? 1 : 0) - uniforms.current.uHover.value) * 0.1;
-
-    if (t === 1 && !travelDone) {
-      setTravelDone(true);
-    }
-
-    const camera = state.camera;
-    const cardForward = new THREE.Vector3(0, 0, 1);
-    cardForward.applyQuaternion(meshRef.current.quaternion);
-
-    const cameraDirection = new THREE.Vector3();
-    camera.getWorldDirection(cameraDirection).normalize();
-
-    const dot = cardForward.dot(cameraDirection);
-    const facing = dot < -0.85;
-    setIsFront(facing);
-  });
-
-  return (
-    <mesh
-      ref={meshRef}
-      onPointerEnter={(e) => {
-        if (!isFront) return;
-        setIsHovered(true);
-        e.stopPropagation();
-      }}
-      onPointerLeave={(e) => {
-        setIsHovered(false);
-        e.stopPropagation();
-      }}
-      onClick={(e) => {
-        if (!isFront) return;
-        onClick(index);
-        e.stopPropagation();
-      }}
-    >
-      <planeGeometry args={[2, 3, 32, 32]} />
-      <shaderMaterial
-        vertexShader={vertexShader}
-        fragmentShader={fragmentShader}
-        uniforms={uniforms.current}
-        side={THREE.DoubleSide}
-        transparent={true}
-      />
-    </mesh>
-  );
-};
-
-// Scene 컴포넌트
-const Scene = ({ onPaperClick, contents }) => {
-  const [scroll, setScroll] = useState(0);
-
-  useEffect(() => {
-    const handleScroll = (e) => {
-      setScroll((prev) => prev - e.deltaY * 0.00005);
-    };
-    window.addEventListener("wheel", handleScroll);
-    return () => window.removeEventListener("wheel", handleScroll);
-  }, []);
-
-  return (
-    <group>
-      {contents.map((content, i) => (
-        <Paper
-          key={i}
-          index={i}
-          scroll={scroll}
-          image={content.image}
-          onClick={onPaperClick}
-          totalCards={contents.length}
-        />
-      ))}
-    </group>
-  );
-};
-
-// Main (Test) 컴포넌트
 const Test = () => {
   const [popupVisible, setPopupVisible] = useState(false);
-  const [popupData, setPopupData] = useState({ title: "", description: "" });
+  const [popupData, setPopupData] = useState({ title: "", extra: null });
   const [starSpeed, setStarSpeed] = useState(0.5);
 
   const contents = [
-    {
-      title: "👤 나에 대해",
-      extra: <MyIntro />,
-      image: Aboutme,
-    },
-    {
-      title: "💻 나의 스킬",
-      extra: <Myskill />,
-      image: Myskillimg,
-    },
-    {
-      title: "📁 넥슨 게임즈",
-      extra: <Nexon />,
-      image: Nexonimg,
-    },
-    {
-      title: "📁 딥 디크",
-      extra: <Diptyque />,
-      image: Diptyqueimg,
-    },
-    {
-      title: "📁 SCM",
-      extra: (
-        <div className="flex items-center justify-center flex-col">
-          <p><strong>프로제트 완료 후 작성 예정(2월)</strong></p>
-          <p><strong>SCM(study cafe map)으로 개인적으로 카페를 찾기 위한 웹앱으로 만드는중</strong></p>
+    { title: "👤 나에 대해", extra: <MyIntro />, image: Aboutme },
+    { title: "💻 나의 스킬", extra: <Myskill />, image: Myskillimg },
+    { title: "📁 넥슨 게임즈", extra: <Nexon />, image: Nexonimg },
+    { title: "📁 딥 디크", extra: <Diptyque />, image: DiptyqueImg },
+    { title: "📁 SCM", image: Defaultimg, extra: (
+        <div className="text-center py-10">
+          <p className="font-bold">프로젝트 완료 후 작성 예정(2월)</p>
+          <p className="text-sm opacity-60 mt-2">SCM(study cafe map) 개발 중</p>
         </div>
-      ),
-      image: Defaultimg,
+      )
     },
   ];
-
-
 
   const handlePaperClick = (index) => {
     setPopupData(contents[index]);
     setPopupVisible(true);
   };
 
-  const controllerStyle = {
-  position: "absolute",
-  top: "30px",
-  left: "30px",
-  zIndex: 100,
-  padding: "20px",
-  background: "rgba(255, 255, 255, 0.1)", 
-  backdropFilter: "blur(10px)", 
-  borderRadius: "15px",
-  border: "1px solid rgba(255, 255, 255, 0.2)",
-  width: "200px"
-};
-
-const labelStyle = {
-  color: "#aaa",
-  fontSize: "12px",
-  fontWeight: "bold",
-  letterSpacing: "1px"
-};
-
-const valueStyle = {
-  color: "#fff",
-  fontSize: "14px",
-  fontWeight: "bold"
-};
-
-const sliderStyle = {
-  width: "100%",
-  cursor: "pointer",
-  accentColor: "#3b82f6",
-};
-
   return (
-    <div style={{ width: "100vw", height: "100vh", background: "#000", position: "relative" }}>
-      
-      <div style={controllerStyle}>
-        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <span style={labelStyle}>Star Speed</span>
-            <span style={valueStyle}>{Number(starSpeed).toFixed(1)}x</span>
+    <div className="w-screen h-screen bg-black relative overflow-hidden">
+      {/* 컨트롤러 유틸리티 UI */}
+      <div className="absolute top-8 left-8 z-[100] p-5 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 w-52">
+        <div className="flex flex-col gap-2">
+          <div className="flex justify-between text-[11px] font-bold text-gray-400 tracking-widest uppercase">
+            <span>Star Speed</span>
+            <span className="text-white">{Number(starSpeed).toFixed(1)}x</span>
           </div>
-          
           <input 
-            type="range" 
-            min="0.0"   // 최소 속도
-            max="10.0"   // 최대 속도
-            step="0.1"  // 조절 단위
+            type="range" min="0" max="10" step="0.1" 
             value={starSpeed} 
             onChange={(e) => setStarSpeed(e.target.value)}
-            style={sliderStyle}
+            className="w-full accent-blue-500 cursor-pointer"
           />
         </div>
       </div>
-      <Canvas
-        style={{ zIndex: 1 }}
-        camera={{
-          position: [0, 4, 8],
-          fov: 45,
-          near: 0.1,
-          far: 100,
-        }}
-      >
+
+      <Canvas camera={{ position: [0, 4, 8], fov: 45 }}>
         <color attach="background" args={["#000"]} />
         <ambientLight intensity={0.5} />
         <pointLight position={[10, 10, 10]} intensity={1} />
         <RainEffect speed={starSpeed}/>
-        <Scene onPaperClick={handlePaperClick} contents={contents} />
+        
+        {/* 씬 내 카드들 */}
+        <group>
+          {contents.map((content, i) => (
+            <Paper 
+              key={i} index={i} 
+              image={content.image} 
+              onClick={handlePaperClick} 
+              totalCards={contents.length} 
+            />
+          ))}
+        </group>
 
-        <OrbitControls
-          enableDamping={true}
-          dampingFactor={0.1}
-          enableZoom={false}
-          enablePan={false}
-        />
+        <OrbitControls enableDamping dampingFactor={0.1} enableZoom={false} enablePan={false} />
       </Canvas>
 
       <Modal
@@ -351,4 +90,5 @@ const sliderStyle = {
     </div>
   );
 };
+
 export default Test;

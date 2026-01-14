@@ -1,5 +1,5 @@
 import React from 'react';
-import profileimg from '../dataimg/profileimg.jpg';
+import profileimg from '../../assets/images/profileimg.jpg';
 
 export default function Myself({ isDark }) {
   return (
