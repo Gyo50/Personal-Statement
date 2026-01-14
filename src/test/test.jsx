@@ -224,6 +224,7 @@ const Scene = ({ onPaperClick, contents }) => {
 const Test = () => {
   const [popupVisible, setPopupVisible] = useState(false);
   const [popupData, setPopupData] = useState({ title: "", description: "" });
+  const [starSpeed, setStarSpeed] = useState(0.5);
 
   const contents = [
     {
@@ -265,9 +266,59 @@ const Test = () => {
     setPopupVisible(true);
   };
 
+  const controllerStyle = {
+  position: "absolute",
+  top: "30px",
+  left: "30px",
+  zIndex: 100,
+  padding: "20px",
+  background: "rgba(255, 255, 255, 0.1)", 
+  backdropFilter: "blur(10px)", 
+  borderRadius: "15px",
+  border: "1px solid rgba(255, 255, 255, 0.2)",
+  width: "200px"
+};
+
+const labelStyle = {
+  color: "#aaa",
+  fontSize: "12px",
+  fontWeight: "bold",
+  letterSpacing: "1px"
+};
+
+const valueStyle = {
+  color: "#fff",
+  fontSize: "14px",
+  fontWeight: "bold"
+};
+
+const sliderStyle = {
+  width: "100%",
+  cursor: "pointer",
+  accentColor: "#3b82f6",
+};
+
   return (
     <div style={{ width: "100vw", height: "100vh", background: "#000", position: "relative" }}>
-      {/* RainCanvas를 가장 먼저 렌더링 */}
+      
+      <div style={controllerStyle}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <span style={labelStyle}>Star Speed</span>
+            <span style={valueStyle}>{Number(starSpeed).toFixed(1)}x</span>
+          </div>
+          
+          <input 
+            type="range" 
+            min="0.0"   // 최소 속도
+            max="10.0"   // 최대 속도
+            step="0.1"  // 조절 단위
+            value={starSpeed} 
+            onChange={(e) => setStarSpeed(e.target.value)}
+            style={sliderStyle}
+          />
+        </div>
+      </div>
       <Canvas
         style={{ zIndex: 1 }}
         camera={{
@@ -280,7 +331,7 @@ const Test = () => {
         <color attach="background" args={["#000"]} />
         <ambientLight intensity={0.5} />
         <pointLight position={[10, 10, 10]} intensity={1} />
-        <RainEffect />
+        <RainEffect speed={starSpeed}/>
         <Scene onPaperClick={handlePaperClick} contents={contents} />
 
         <OrbitControls
@@ -300,5 +351,4 @@ const Test = () => {
     </div>
   );
 };
-
 export default Test;

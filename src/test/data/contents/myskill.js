@@ -39,7 +39,7 @@ export default function Myskill({ isDark }) {
         <div className={`space-y-8 p-2 ${isDark ? 'text-white' : 'text-gray-800'}`}>
             {Object.entries(skillData).map(([category, skills]) => (
                 <div key={category} className="animate-fadeIn">
-                    <h3 className={`text-lg font-bold mb-4 border-l-4 pl-3 ${isDark ? 'border-blue-400' : 'border-blue-600'}`}>
+                    <h3 className={`text-lg font-bold mb-4 pl-3 underline-offset-4 ${isDark ? 'text-blue-400 underline' : 'text-blue-600 underline'}`}>
                         {category}
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
