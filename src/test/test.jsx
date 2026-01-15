@@ -11,12 +11,14 @@ import Myskillimg from './assets/images/myskill.png';
 import Nexonimg from './assets/images/Nexon.png';
 import DiptyqueImg from './assets/images/diptyque.png';
 import Defaultimg from './assets/images/Default.png';
+import Rollingimg from './assets/images/Rolling.png';
 
 // 컨텐츠 컴포넌트
 import MyIntro from "../test/components/contents/myself";
 import Myskill from "../test/components/contents/myskill";
 import Nexon from "../test/components/contents/nexon";
 import Diptyque from "../test/components/contents/diptyque";
+import Rolling from "../test/components/contents/rolling";
 
 const Test = () => {
   const [popupVisible, setPopupVisible] = useState(false);
@@ -28,6 +30,7 @@ const Test = () => {
     { title: "💻 나의 스킬", extra: <Myskill />, image: Myskillimg },
     { title: "📁 넥슨 게임즈", extra: <Nexon />, image: Nexonimg },
     { title: "📁 딥 디크", extra: <Diptyque />, image: DiptyqueImg },
+    { title: "📁 롤링페이지", extra: <Rolling />, image: Rollingimg },
     { title: "📁 SCM", image: Defaultimg, extra: (
         <div className="text-center py-10">
           <p className="font-bold">프로젝트 완료 후 작성 예정(2월)</p>
