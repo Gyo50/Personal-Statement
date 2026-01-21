@@ -63,31 +63,56 @@ const Paper = ({ index, onClick, totalCards, image, text, subText }) => {
 
   useFrame((state) => {
     if (!meshRef.current) return;
+    
+    // 1. 시간 업데이트
     uniforms.current.uTime.value = state.clock.elapsedTime;
     if (entryStart.current === null) entryStart.current = state.clock.elapsedTime;
-    if (hoverLock && Math.abs(meshRef.current.rotation.x) < 1) {
-      setHoverLock(false);
-    }
+    
+    // 2. 등장 애니메이션 (ease) 계산
     const elapsed = state.clock.elapsedTime - entryStart.current;
     const t = Math.min(elapsed / travelDuration, 1);
-    const ease = t * t * (3 - 2 * t);
+    const ease = t * t * (3 - 2 * t); // ease 변수 유지
 
+    // 3. 원형 배치 각도 계산
     const finalAngle = (index * Math.PI * 2) / totalCards;
     const startAngle = finalAngle + Math.PI;
     const currentAngle = startAngle + (finalAngle - startAngle) * ease;
 
-    meshRef.current.position.set(Math.sin(currentAngle) * radius, 0, Math.cos(currentAngle) * radius);
+    // 4. 위치 설정 (반응형 radius 적용)
+    meshRef.current.position.set(
+      Math.sin(currentAngle) * radius, 
+      0, 
+      Math.cos(currentAngle) * radius
+    );
+
+    // 5. 회전 순서 고정 (X축 기울기가 Y축 회전에 종속되지 않게 함)
+    meshRef.current.rotation.set(0, 0, 0); 
+    meshRef.current.rotation.order = 'YXZ'; 
+
+    // Y축 회전: 원형으로 바깥을 보게 함
     meshRef.current.rotation.y = ((currentAngle + Math.PI) % (Math.PI * 2)) - Math.PI;
-    meshRef.current.scale.set(1.4 + (1 - 1.4) * ease, 1.4 + (1 - 1.4) * ease, 1.4 + (1 - 1.4) * ease);
 
-    const targetX = isHovered ? -(Math.PI / 180) * 25 : 0;
-    meshRef.current.rotation.x += (targetX - meshRef.current.rotation.x) * 0.1;
+    // 부드러운 호버 전환을 위해 기존 rotation.x를 보간하거나 uHover 활용
     uniforms.current.uHover.value += ((isHovered ? 1 : 0) - uniforms.current.uHover.value) * 0.1;
+    meshRef.current.rotation.x = uniforms.current.uHover.value * -(Math.PI / 180) * 25;
 
+    // 6. 스케일 애니메이션 (ease 적용)
+    meshRef.current.scale.set(
+      1.4 + (1 - 1.4) * ease, 
+      1.4 + (1 - 1.4) * ease, 
+      1.4 + (1 - 1.4) * ease
+    );
+
+    // 7. 정면 판별 및 기타 로직
     const cardForward = new THREE.Vector3(0, 0, 1).applyQuaternion(meshRef.current.quaternion);
     const cameraDir = new THREE.Vector3();
     state.camera.getWorldDirection(cameraDir).normalize();
     setIsFront(cardForward.dot(cameraDir) < -0.85);
+
+    // hoverLock 해제 로직 유지
+    if (hoverLock && Math.abs(meshRef.current.rotation.x) < 0.1) {
+      setHoverLock(false);
+    }
   });
 
   return (

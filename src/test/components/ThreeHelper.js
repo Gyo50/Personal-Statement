@@ -8,14 +8,12 @@ export const vertexShader = `
     vec3 pos = position;
     // 카드 굴곡 효과
     float baseWave = -(pow(pos.x * 0.5, 2.0)) * 0.2;
-    float hoverWave = sin(pos.x * 1.5 + uTime) * 0.15 * uHover;
+    float hoverWave = sin(pos.y * 0.5 + uTime) * 0.15 * uHover;
     pos.z += baseWave + hoverWave;
     gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
   }
 
 `;
-
-
 
 export const fragmentShader = `
   uniform sampler2D uTexture;
@@ -46,10 +44,11 @@ export const fragmentShader = `
     float edge1 = smoothstep(0.01, 0.0, abs(d1));
     float glow1 = exp(-abs(d1) * 25.0) * 1.6;
 
-    vec3 colorCyan = vec3(0.0, 0.9, 1.0);
-    vec3 colorBlue = vec3(0.0, 0.2, 1.0);
-    vec3 neonColor = mix(colorCyan, colorBlue, vUv.y);
-
+    vec3 colorCyan = vec3(0.0, 0.8, 2.0);
+    vec3 colorPurple = vec3(1.0, 0.5, 3.0);
+    float diag = (vUv.x - 0.5) * (vUv.y - 0.5);
+    vec3 neonColor = mix(colorCyan, colorPurple, clamp(diag * 4.0 + 0.5, 0.0, 1.0));
+    
     vec4 texColor = texture2D(uTexture, vUv);
     vec3 cardBg = vec3(0.02, 0.02, 0.05);
 
