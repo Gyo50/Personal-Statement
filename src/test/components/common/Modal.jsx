@@ -40,7 +40,7 @@ const Modal = ({ visible, onClose, title, extra }) => {
         </div>
 
         {/* 컨텐츠 영역 */}
-        <div className="p-6 pt-4">
+        <div className="p-6 pt-9">
           {React.isValidElement(extra) ? React.cloneElement(extra, { isDark }) : extra}
         </div>
       </div>
