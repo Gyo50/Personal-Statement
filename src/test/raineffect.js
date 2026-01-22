@@ -64,7 +64,7 @@ const StarShader = ({ speed = 0.5 }) => {
         transparent: true,
         depthWrite: false,
       }),
-    []
+    [speed]
   );
 
   useFrame(({ clock }) => {

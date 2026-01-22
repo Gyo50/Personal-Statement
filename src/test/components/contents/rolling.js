@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-import DemoPcimg from '../../assets/images/DemoPc.svg'; // PC 프레임 공통 이미지
+import DemoPcimg from '../../assets/images/DemoPc.svg';
 import DetailCard from '../../components/common/DetailCard';
-import DemoRollingImg from '../../assets/images/DemoRolling.svg'; // 롤링페이퍼 스크린 이미지
+import DemoRollingImg from '../../assets/images/DemoRolling.svg';
 
 /**
  * 스크롤 감지 및 지연 애니메이션을 위한 커스텀 훅
@@ -38,9 +38,9 @@ const useScrollFadeIn = (delay = 0) => {
 
 function Rolling({ isDark }) {
     // 섹션별 시차(Delay) 적용
-    const fadeInImage = useScrollFadeIn(100);   // 이미지 섹션
-    const fadeInInfo = useScrollFadeIn(400);    // 기술 스택 섹션
-    const fadeInDetails = useScrollFadeIn(700); // 하단 상세 정보
+    const fadeInImage = useScrollFadeIn(100);
+    const fadeInInfo = useScrollFadeIn(400);
+    const fadeInDetails = useScrollFadeIn(700);
 
     const techStacks = [
         { name: 'React', percentage: 90, color: 'bg-cyan-400', icon: '⚛️' },
