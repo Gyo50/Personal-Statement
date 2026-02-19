@@ -40,10 +40,30 @@ export default function Myself({ isDark }) {
         <DetailCard title="✨ 별명" isDark={isDark}>
           <span className="font-semibold text-blue-400">소프트영:</span> 부드러운 성격과 학과명이 합쳐진 이름입니다.
         </DetailCard>
+        <DetailCard title="💼 경력" isDark={isDark}>
+          <div className="mb-2">
+            <span className={`font-semibold ${isDark ? 'text-blue-400' : 'text-blue-600'}`}>
+              (주) 모렌비
+            </span>
+            <span className="ml-2 text-xs opacity-80">
+              (2025.05 ~ 2025.08)
+            </span>
+          </div>
+          <div className="mt-2">
+            <span className="font-semibold opacity-90">주요 업무</span>
+            <ul className="list-disc pl-4 mt-1 space-y-1">
+              <li>카페24 기반 쇼핑몰 구축 및 유지보수</li>
+              <li>HTML, CSS, JavaScript를 활용한 신규 페이지 제작 및 기능 개선</li>
+              <li>Figma 디자인 시안 기반 퍼블리싱 및 UI 구현</li>
+              <li>고객 요구사항 분석 후 기능 추가 및 사이트 커스터마이징</li>
+              <li>운영 중 오류 수정 및 서비스 안정화 작업 수행</li>
+            </ul>
+          </div>
+        </DetailCard>
 
         <div className="grid grid-cols-2 gap-4">
           <DetailCard title="🧠 MBTI" isDark={isDark}>ESFJ</DetailCard>
-          <DetailCard title="🎨 취미" isDark={isDark}>운동, 독서</DetailCard>
+          <DetailCard title="🎨 취미" isDark={isDark}>운동, AI로 개발 다양한 재미 붙이기</DetailCard>
         </div>
 
         <DetailCard title="🤝 성격 및 가치관" isDark={isDark}>
