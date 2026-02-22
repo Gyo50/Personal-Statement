@@ -8,29 +8,26 @@ const Paper = ({ index, onClick, totalCards, image, text, subText }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isFront, setIsFront] = useState(false);
   const entryStart = useRef(null);
-  const [hoverLock, setHoverLock] = useState(false);
-
   const radius = 3;
   const travelDuration = 1;
 
+  // Texture
   const texture = useMemo(() => {
     const canvas = document.createElement("canvas");
     canvas.width = 512;
     canvas.height = 768;
     const ctx = canvas.getContext("2d");
+    const tex = new THREE.CanvasTexture(canvas);
 
     const render = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      // 메인 텍스트 (가운데 위)
       ctx.fillStyle = "#ffffff";
       ctx.font = "bold 50px Arial";
       ctx.textAlign = "center";
       ctx.fillText(text || "", canvas.width / 2, 340);
 
-      // 서브 텍스트 (가운데 아래, 줄바꿈 처리)
       if (subText) {
-        ctx.fillStyle = "#00eaff"; // 파란색 계열 네온 느낌
+        ctx.fillStyle = "#00eaff";
         ctx.font = "30px Arial";
         const lines = subText.split("\n");
         lines.forEach((line, i) => {
@@ -40,7 +37,6 @@ const Paper = ({ index, onClick, totalCards, image, text, subText }) => {
       tex.needsUpdate = true;
     };
 
-    const tex = new THREE.CanvasTexture(canvas);
     render();
 
     if (image) {
@@ -49,6 +45,7 @@ const Paper = ({ index, onClick, totalCards, image, text, subText }) => {
       img.crossOrigin = "anonymous";
       img.onload = render;
     }
+
     return tex;
   }, [text, subText, image]);
 
@@ -58,78 +55,70 @@ const Paper = ({ index, onClick, totalCards, image, text, subText }) => {
     uTexture: { value: texture },
   });
 
-
-  useEffect(() => { uniforms.current.uTexture.value = texture; }, [texture]);
+  useEffect(() => {
+    uniforms.current.uTexture.value = texture;
+  }, [texture]);
 
   useFrame((state) => {
     if (!meshRef.current) return;
-    
-    // 1. 시간 업데이트
+    const mesh = meshRef.current;
+    // 시간 업데이트
     uniforms.current.uTime.value = state.clock.elapsedTime;
-    if (entryStart.current === null) entryStart.current = state.clock.elapsedTime;
-    
-    // 2. 등장 애니메이션 (ease) 계산
+
+    if (entryStart.current === null)
+      entryStart.current = state.clock.elapsedTime;
     const elapsed = state.clock.elapsedTime - entryStart.current;
     const t = Math.min(elapsed / travelDuration, 1);
-    const ease = t * t * (3 - 2 * t); // ease 변수 유지
-
-    // 3. 원형 배치 각도 계산
+    const ease = t * t * (3 - 2 * t);
     const finalAngle = (index * Math.PI * 2) / totalCards;
     const startAngle = finalAngle + Math.PI;
     const currentAngle = startAngle + (finalAngle - startAngle) * ease;
 
-    // 4. 위치 설정 (반응형 radius 적용)
-    meshRef.current.position.set(
-      Math.sin(currentAngle) * radius, 
-      0, 
-      Math.cos(currentAngle) * radius
+    // 위치
+    mesh.position.set(
+      Math.sin(currentAngle) * radius,
+      0.5,
+      Math.cos(currentAngle) * radius,
     );
 
-    // 5. 회전 순서 고정 (X축 기울기가 Y축 회전에 종속되지 않게 함)
-    meshRef.current.rotation.set(0, 0, 0); 
-    meshRef.current.rotation.order = 'YXZ'; 
+    // 회전
+    mesh.rotation.set(0, 0, 0);
+    mesh.rotation.order = "YXZ";
+    mesh.rotation.y = ((currentAngle + Math.PI) % (Math.PI * 2)) - Math.PI;
+    // Hover easing
+    const hoverTarget = isHovered ? 1 : 0;
 
-    // Y축 회전: 원형으로 바깥을 보게 함
-    meshRef.current.rotation.y = ((currentAngle + Math.PI) % (Math.PI * 2)) - Math.PI;
+    uniforms.current.uHover.value +=
+      (hoverTarget - uniforms.current.uHover.value) * 0.1;
+    mesh.rotation.x = uniforms.current.uHover.value * -(Math.PI / 180) * 25;
+    mesh.scale.set(1, 1, 1);
 
-    // 부드러운 호버 전환을 위해 기존 rotation.x를 보간하거나 uHover 활용
-    uniforms.current.uHover.value += ((isHovered ? 1 : 0) - uniforms.current.uHover.value) * 0.1;
-    meshRef.current.rotation.x = uniforms.current.uHover.value * -(Math.PI / 180) * 25;
-
-    // 6. 스케일 애니메이션 (ease 적용)
-    meshRef.current.scale.set(
-      1.4 + (1 - 1.4) * ease, 
-      1.4 + (1 - 1.4) * ease, 
-      1.4 + (1 - 1.4) * ease
-    );
-
-    // 7. 정면 판별 및 기타 로직
-    const cardForward = new THREE.Vector3(0, 0, 1).applyQuaternion(meshRef.current.quaternion);
+    // 정면 판별
+    const forward = new THREE.Vector3(0, 0, 1).applyQuaternion(mesh.quaternion);
     const cameraDir = new THREE.Vector3();
-    state.camera.getWorldDirection(cameraDir).normalize();
-    setIsFront(cardForward.dot(cameraDir) < -0.85);
-
-    // hoverLock 해제 로직 유지
-    if (hoverLock && Math.abs(meshRef.current.rotation.x) < 0.1) {
-      setHoverLock(false);
-    }
+    state.camera.getWorldDirection(cameraDir);
+    const front = forward.dot(cameraDir) < -0.85;
+    if (front !== isFront) setIsFront(front);
+    if (!front && isHovered) setIsHovered(false);
   });
 
   return (
     <mesh
       ref={meshRef}
-      onPointerEnter={() => {
+      onPointerEnter={(e) => {
         if (!isFront) return;
+        e.stopPropagation();
         setIsHovered(true);
-        setHoverLock(true);
         document.body.style.cursor = "pointer";
       }}
       onPointerLeave={() => {
-        if (hoverLock) return;
         setIsHovered(false);
         document.body.style.cursor = "default";
       }}
-      onClick={(e) => { e.stopPropagation(); if (isFront) onClick(index); }}
+      onClick={(e) => {
+        e.stopPropagation();
+        if (isFront) onClick(index);
+      }}
       pointerEvents={isFront ? "auto" : "none"}
     >
       <planeGeometry args={[2, 3, 32, 32]} />
@@ -138,8 +127,8 @@ const Paper = ({ index, onClick, totalCards, image, text, subText }) => {
         fragmentShader={fragmentShader}
         uniforms={uniforms.current}
         side={THREE.DoubleSide}
-        transparent={true}  // 배경을 투명하게 하기 위해 true로 설정
-        depthWrite={false}  // 투명한 물체끼리 겹칠 때 어색함을 줄이기 위해 false 권장
+        transparent
+        depthWrite={false}
       />
     </mesh>
   );

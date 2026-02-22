@@ -90,7 +90,7 @@ function Rolling({ isDark }) {
                         </div>
                         <div>
                             <span className={`text-[10px] font-black uppercase tracking-widest ${isDark ? 'text-indigo-400' : 'text-indigo-600'}`}>Type</span>
-                            <p className="text-lg font-bold">PC / Mobile (Team)</p>
+                            <p className="text-lg font-bold">PC / Mobile</p>
                         </div>
                     </div>
                     <a href="https://rolling-flax.vercel.app/" target="_blank" rel="noreferrer"

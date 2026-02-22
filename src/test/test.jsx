@@ -33,7 +33,7 @@ const Test = () => {
         </div>
       </div>
 
-      <Canvas camera={{ position: [0, 4, 8], fov: 45 }}>
+      <Canvas camera={{ position: [0, 3, 8], fov: 55 }}>
         <color attach="background" args={["#000"]} />
         <ambientLight intensity={0.5} />
         <pointLight position={[10, 10, 10]} intensity={1} />

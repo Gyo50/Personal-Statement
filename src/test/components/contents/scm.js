@@ -40,7 +40,7 @@ function Scm({ isDark }) {
     const fadeInDetails = useScrollFadeIn(700);
 
     const techStacks = [
-        { name: 'Next.js 15', percentage: 90, color: 'bg-black', icon: '🌐' },
+        { name: 'Next.js', percentage: 90, color: 'bg-black', icon: '🌐' },
         { name: 'React', percentage: 90, color: 'bg-cyan-400', icon: '⚛️' },
         { name: 'Supabase', percentage: 85, color: 'bg-emerald-500', icon: '⚡' },
         { name: 'Tailwind CSS', percentage: 95, color: 'bg-sky-500', icon: '🎨' },
@@ -71,7 +71,6 @@ function Scm({ isDark }) {
                                 alt="Nexon Demo Screen"
                                 className="w-full h-full object-cover object-top transition-transform duration-700 group-hover/img:scale-110"
                             />
-                            {/* 나중에 캔버스 효과를 넣으실 경우 이 자리에 삽입하시면 됩니다 */}
                         </div>
                     </div>
                 </div>
@@ -80,7 +79,7 @@ function Scm({ isDark }) {
                     <div className="grid grid-cols-2 gap-4">
                         <div>
                             <span className={`text-[10px] font-black uppercase tracking-widest ${isDark ? 'text-blue-400' : 'text-blue-600'}`}>Project Name</span>
-                            <p className="text-lg font-bold">Nexon Games Redesign</p>
+                            <p className="text-lg font-bold">SCM</p>
                         </div>
                         <div>
                             <span className={`text-[10px] font-black uppercase tracking-widest ${isDark ? 'text-blue-400' : 'text-blue-600'}`}>Type</span>
@@ -93,10 +92,10 @@ function Scm({ isDark }) {
                         <span className="group-hover:translate-x-full group-hover:opacity-0 transition-all duration-500">LIVE DEMO VIEW</span>
                     </a>
                     <p className={`font-bold ${isDark ? 'text-gray-200 opacity-50' : 'text-gray-600 opacity-50'} mt-4 text-sm text-center`}>
-                        현재 지속적으로 API 추가 및 기능 개선 작업이 진행 중이라 지도가 보이지 않을 수 있습니다.
+                        현재 노량진 부근의 카페만 제공하고 있습니다.
                     </p>
                 </div>
-
+            </div>
                 {/* [오른쪽 섹션] 기술 스택 및 상세 설명 */}
                 <div
                     ref={fadeInInfo.ref}
@@ -108,7 +107,7 @@ function Scm({ isDark }) {
                         PROJECT DETAILS
                     </h3>
 
-                    <div className="grid grid-cols-1 gap-4">
+                    <div className="grid grid-cols-1 gap-3">
                         {/* 기술 스택 카드 */}
                         <div className={`p-5 rounded-2xl border ${isDark ? 'bg-gray-800/40 border-gray-700' : 'bg-gray-50 border-gray-100'}`}>
                             <h4 className="text-xs font-bold mb-4 opacity-60 tracking-tighter">USED TECH STACK</h4>
@@ -201,7 +200,6 @@ function Scm({ isDark }) {
                     </div>
                 </div>
             </div>
-        </div>
     );
 }
 

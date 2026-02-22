@@ -37,7 +37,7 @@ function Thejulge({ isDark }) {
 
   // 더 줄게 프로젝트에 특화된 기술 스택
   const techStacks = [
-    { name: 'Next.js (App Router)', percentage: 95, color: 'bg-black', icon: '🚀' },
+    { name: 'Next.js', percentage: 95, color: 'bg-black', icon: '🚀' },
     { name: 'TypeScript', percentage: 90, color: 'bg-blue-600', icon: '🔷' },
     { name: 'Tailwind CSS', percentage: 95, color: 'bg-cyan-400', icon: '🎨' },
     { name: 'Zustand', percentage: 80, color: 'bg-amber-600', icon: '🐻' },
@@ -83,7 +83,7 @@ function Thejulge({ isDark }) {
             </div>
             <div>
               <span className={`text-[10px] font-black uppercase tracking-widest ${isDark ? 'text-purple-400' : 'text-purple-600'}`}>Type</span>
-              <p className="text-lg font-bold">3D Web / Interactive</p>
+              <p className="text-lg font-bold">PC / Mobile</p>
             </div>
           </div>
           <a href="https://the-julge-zeta.vercel.app/notice/notices-list" target="_blank" rel="noreferrer"
