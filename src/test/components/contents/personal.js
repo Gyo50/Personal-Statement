@@ -184,11 +184,10 @@ function Personal({ isDark }) {
               >
                 Type
               </span>
-              <p className="text-lg font-bold">PC Showroom</p>
+              <p className="text-lg font-bold">PC / Mobile</p>
             </div>
           </div>
 
-          {/* 🔥 추천 위치 1: 프로젝트 카드 하단 버튼 섹션 */}
           <div className="flex gap-2 pt-2">
             <a
               href="https://github.com/gyo50/Personal-Statement"

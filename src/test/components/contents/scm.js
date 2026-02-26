@@ -209,7 +209,7 @@ function Scm({ isDark }) {
               <span>🔗 GitHub</span>
             </a>
             <a
-              href="https://www.notion.so/3136fb764ad1806bb5cdc5601745f434?source=copy_link"
+              href="https://www.notion.so/SCM-StudyCafeMap-3136fb764ad1801eb203d2a536bb8b69?source=copy_link"
               target="_blank"
               rel="noreferrer"
               className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-xs font-bold transition-all ${isDark ? "bg-blue-500/20 hover:bg-blue-500/40 text-blue-300 border border-blue-500/30" : "bg-blue-100 hover:bg-blue-200 text-blue-700 border border-blue-200"}`}
@@ -284,8 +284,13 @@ function Scm({ isDark }) {
             </DetailCard>
 
             <DetailCard title="개발 배경" icon="💡" isDark={isDark}>
-              단순한 정보 제공을 넘어 요일별 실시간 운영 상태를 분석해
-              직관적으로 제공하는 맞춤형 지도를 목표로 했습니다.
+              카페에서 공부하는 문화가 보편화되었음에도 불구하고, 기존 지도
+              서비스들은 카페의 '음료'나 '분위기' 정보에 치중되어 있어 '학습
+              환경'에 대한 구체적인 정보를 얻기엔 한계가 있었습니다. 저는 이러한
+              사용자들의 니즈에 주목하여, Next.js와 Kakao Map API를 결합해
+              실시간으로 카페 위치를 시각화하고, Supabase를 이용한 데이터 관리를
+              통해 학습자들이 필요로 하는 핵심 정보를 효율적으로 전달하는
+              플랫폼을 개발하고자 했습니다.
             </DetailCard>
 
             <DetailCard title="배운 점 & 성과" icon="🏆" isDark={isDark}>

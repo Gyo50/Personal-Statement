@@ -189,7 +189,7 @@ function Coworkers({ isDark }) {
               >
                 Type
               </span>
-              <p className="text-lg font-bold">Team Collaboration</p>
+              <p className="text-lg font-bold">PC / Mobile</p>
             </div>
           </div>
           <div className="flex gap-2 pt-2">
