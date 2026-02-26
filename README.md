@@ -10,6 +10,7 @@
 
 ## 🛠 기술 스택
 * **Framework**: React 19 (v7 Router)
+* **Build Tool**: **Vite**
 * **Graphics**: **Three.js**, **@react-three/fiber**, **@react-three/drei**
 * **Animation**: **Framer Motion**
 * **Styling**: Tailwind CSS (v4)
