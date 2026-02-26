@@ -1,13 +1,14 @@
-import scrollbarHide from 'tailwind-scrollbar-hide';
+import scrollbarHide from "tailwind-scrollbar-hide";
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["./src/**/*.{js,jsx,ts,tsx}",],
+  content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
-    extend: {},
+    extend: {
+      animation: {
+        "spin-slow": "spin 8s linear infinite",
+      },
+    },
   },
-  plugins: [
-    scrollbarHide
-  ],
-}
-
+  plugins: [scrollbarHide],
+};
