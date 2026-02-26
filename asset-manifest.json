@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/Personal-Statement/static/css/main.c320af41.css",
-    "main.js": "/Personal-Statement/static/js/main.240780f4.js",
+    "main.css": "/Personal-Statement/static/css/main.60d8dc39.css",
+    "main.js": "/Personal-Statement/static/js/main.142d4302.js",
     "static/js/511.3b5c0f8b.chunk.js": "/Personal-Statement/static/js/511.3b5c0f8b.chunk.js",
     "static/media/DemoScm.svg": "/Personal-Statement/static/media/DemoScm.66e1e1c5c2befd3649e2f548560fccea.svg",
     "static/media/DemoDiptyque.svg": "/Personal-Statement/static/media/DemoDiptyque.cdfe25677779397881dfe9686ebd1e7a.svg",
@@ -10,13 +10,14 @@
     "static/media/DemoPc.svg": "/Personal-Statement/static/media/DemoPc.b0c1e2c9dfda9f585bae90fa14eae2bd.svg",
     "static/media/DemoNexon.svg": "/Personal-Statement/static/media/DemoNexon.07acf617bcd55c109d3f9c5fa87bb861.svg",
     "static/media/DemoRolling.svg": "/Personal-Statement/static/media/DemoRolling.a52a5e24ad59adba356be52eafada93d.svg",
+    "static/media/DemoCoworkers.svg": "/Personal-Statement/static/media/DemoCoworkers.0990e784744c46711dcd72c0a263302e.svg",
     "index.html": "/Personal-Statement/index.html",
-    "main.c320af41.css.map": "/Personal-Statement/static/css/main.c320af41.css.map",
-    "main.240780f4.js.map": "/Personal-Statement/static/js/main.240780f4.js.map",
+    "main.60d8dc39.css.map": "/Personal-Statement/static/css/main.60d8dc39.css.map",
+    "main.142d4302.js.map": "/Personal-Statement/static/js/main.142d4302.js.map",
     "511.3b5c0f8b.chunk.js.map": "/Personal-Statement/static/js/511.3b5c0f8b.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.c320af41.css",
-    "static/js/main.240780f4.js"
+    "static/css/main.60d8dc39.css",
+    "static/js/main.142d4302.js"
   ]
 }
