@@ -9,6 +9,7 @@ import Rolling from "../contents/rolling";
 import Thejulge from "../contents/thejulge";
 import Scm from "../contents/scm";
 import Personal from "../contents/personal";
+import Coworkers from "../contents/coworkers";
 
 export const CARD_CONTENTS = [
   //   {
@@ -26,38 +27,44 @@ export const CARD_CONTENTS = [
   {
     title: "📁 Personal",
     detail: "Personal",
-    subText: "Personal Page",
+    subText: "포트폴리오 모음\n홈페이지",
     extra: <Personal />,
   },
   {
     title: "📁 넥슨 게임즈",
     detail: "넥슨 게임즈",
-    subText: "Nexon Page",
+    subText: "넥슨 게임즈\n클론 홈페이지",
     extra: <Nexon />,
   },
   {
     title: "📁 딥 디크",
     detail: "딥 디크",
-    subText: "Diptyque Page",
+    subText: "딥 디크 백화점\nMicro 홈페이지",
     extra: <Diptyque />,
   },
   {
     title: "📁 롤링페이지",
     detail: "롤링페이지",
-    subText: "Rolling Page",
+    subText: "롤링페이퍼를\n구현한 홈페이지",
     extra: <Rolling />,
   },
   {
     title: "📁 Thejulge",
     detail: "더 줄게",
-    subText: "Thejulge Page",
+    subText: "알바 구인구직\n홈페이지",
     extra: <Thejulge />,
   },
   {
     title: "📁 SCM",
     detail: "SCM",
-    subText: "S(study)\nC(cafe)\nM(map)",
+    subText: "카공하기 위해\n카페 찾는 홈페이지",
     extra: <Scm />,
+  },
+  {
+    title: "📁 Coworkers",
+    detail: "Coworkers",
+    subText: "팀단위로 투두리스트를\n관리하는 홈페이지",
+    extra: <Coworkers />,
   },
 ];
 export default CARD_CONTENTS;
