@@ -75,9 +75,8 @@ function Coworkers({ isDark }) {
     <div className="flex flex-col gap-8 text-left pb-10">
       {/* 커스텀 마우스 커서 섹션 */}
       <div
-        className={`fixed pointer-events-none z-[9999] transition-[transform,opacity] duration-300 ease-out ${
-          isHovering ? "scale-100 opacity-100" : "scale-0 opacity-0"
-        }`}
+        className={`fixed pointer-events-none z-[9999] transition-[transform,opacity] duration-300 ease-out ${isHovering ? "scale-100 opacity-100" : "scale-0 opacity-0"
+          }`}
         style={{
           left: mousePos.x,
           top: mousePos.y,
@@ -88,9 +87,8 @@ function Coworkers({ isDark }) {
         }}
       >
         <div
-          className={`absolute inset-0 rounded-full border-2 border-cyan-400/50 transition-all duration-500 ease-out ${
-            isClicked ? "scale-[1.8] opacity-0" : "scale-100 opacity-0"
-          }`}
+          className={`absolute inset-0 rounded-full border-2 border-cyan-400/50 transition-all duration-500 ease-out ${isClicked ? "scale-[1.8] opacity-0" : "scale-100 opacity-0"
+            }`}
         />
         <div className="absolute inset-4 rounded-full bg-blue-500/20 blur-xl animate-pulse" />
         <svg
@@ -134,11 +132,10 @@ function Coworkers({ isDark }) {
       {/* [왼쪽 섹션] 이미지 및 기본 정보 */}
       <div
         ref={fadeInImage.ref}
-        className={`basis-2/5 flex flex-col items-center md:items-start transition-all duration-1000 ease-out transform ${
-          fadeInImage.isVisible
+        className={`basis-2/5 flex flex-col items-center md:items-start transition-all duration-1000 ease-out transform ${fadeInImage.isVisible
             ? "opacity-100 translate-y-0"
             : "opacity-0 translate-y-10"
-        }`}
+          }`}
       >
         <div className="relative mb-6 group/img w-full flex justify-center">
           <div className="absolute -inset-1 bg-gradient-to-r from-sky-400 to-indigo-500 rounded-3xl blur opacity-30 group-hover/img:opacity-60 transition duration-1000"></div>
@@ -216,11 +213,10 @@ function Coworkers({ isDark }) {
       {/* [오른쪽 섹션] 기술 스택 및 상세 설명 */}
       <div
         ref={fadeInInfo.ref}
-        className={`basis-3/5 space-y-4 transition-all duration-1000 ease-out transform ${
-          fadeInInfo.isVisible
+        className={`basis-3/5 space-y-4 transition-all duration-1000 ease-out transform ${fadeInInfo.isVisible
             ? "opacity-100 translate-y-0"
             : "opacity-0 translate-y-10"
-        }`}
+          }`}
       >
         <h3
           className={`text-xl font-black flex items-center gap-2 ${isDark ? "text-indigo-300" : "text-indigo-900"}`}
@@ -264,11 +260,10 @@ function Coworkers({ isDark }) {
           {/* 하단 상세 카드 섹션 */}
           <div
             ref={fadeInDetails.ref}
-            className={`space-y-3 transition-all duration-1000 ease-out transform ${
-              fadeInDetails.isVisible
+            className={`space-y-3 transition-all duration-1000 ease-out transform ${fadeInDetails.isVisible
                 ? "opacity-100 translate-y-0"
                 : "opacity-0 translate-y-5"
-            }`}
+              }`}
           >
             <DetailCard title="소개" icon="👥" isDark={isDark}>
               Coworkers는 프로젝트 팀원들이 할 일을 체계적으로 관리하고, 지식과
@@ -280,27 +275,27 @@ function Coworkers({ isDark }) {
               <ul className="list-disc list-inside space-y-2 opacity-90 text-sm leading-relaxed">
                 <li>
                   <span className="font-bold text-indigo-500">
-                    Zustand 기반 인증 상태 관리:
+                    인증 상태 관리 및 로그인 흐름 구현:
                   </span>{" "}
-                  Zustand 스토어를 통해 유저 프로필과 토큰 정보를 중앙
-                  집중화하고, 로그인 상태에 따른 전역 라우팅 가드를
-                  구현했습니다.
+                  Zustand를 사용하여 인증 상태를 전역으로 관리하고 이메일 및 카카오 로그인 기능을 구현했습니다.
+                  인가 코드 처리 → 토큰 저장 → 사용자 정보 조회 흐름을 구성하여 로그인 이후 상태가 안정적으로 유지되도록 설계했습니다.
                 </li>
+
                 <li>
                   <span className="font-bold text-indigo-500">
-                    Three.js 기반 인터랙티브 랜딩 구현:
+                    3D 랜딩 페이지 인터랙션 구현:
                   </span>{" "}
-                  메인 페이지의 시각적 요소를 전담하여 Three.js 3D 모델을
-                  렌더링하고, 사용자 마우스 좌표와 연동된 동적 애니메이션을
-                  구현했습니다.
+                  Three.js와 React Three Fiber를 활용하여 서비스 소개용 3D 랜딩 페이지를 구현했습니다.
+                  사용자 인터랙션에 반응하는 애니메이션을 구성하고 Suspense와 환경 분기 처리를 통해 렌더링 성능을 최적화했습니다.
                 </li>
+
                 <li>
                   <span className="font-bold text-indigo-500">
-                    인증 로직 및 API 자동화:
+                    API 요청 구조 및 토큰 자동 갱신 구현:
                   </span>{" "}
-                  카카오 간편 로그인 시스템을 구축하고, Axios Interceptor를 통해
-                  액세스 토큰 만료 시 Refresh Token으로 자동 갱신하는 보안
-                  프로세스를 전담했습니다.
+                  fetchClient를 구현하여 API 요청을 중앙에서 관리하고,
+                  AccessToken 만료 시 Refresh Token을 통해 자동 갱신되는 인증 구조를 설계했습니다.
+                  토큰 갱신 중복 요청을 방지하여 인증 흐름의 안정성을 개선했습니다.
                 </li>
               </ul>
             </DetailCard>
